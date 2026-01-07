@@ -1,3 +1,5 @@
+# This is fork from [https://github.com/hashbite/strapi-plugin-lexical](https://github.com/hashbite/strapi-plugin-lexical)
+
 # strapi-plugin-lexical
 
 > Integrates the [Lexical WYSIWYG editor](https://lexical.dev/) as a custom field in Strapi. Basically a port of [Lexical playground](https://playground.lexical.dev/) into strapi environment with some nice extras.
