@@ -336,23 +336,25 @@ function TextFormatFloatingToolbar({
           >
             <i className="format capitalize" />
           </button>
-          <button
-            type="button"
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
-            }}
-            className={'popup-item spaced ' + (isCode ? 'active' : '')}
-            title={formatMessage({
-              id: 'lexical.plugin.format.code.title',
-              defaultMessage: 'Insert code block',
-            })}
-            aria-label={formatMessage({
-              id: 'lexical.plugin.format.code.aria',
-              defaultMessage: 'Insert code block',
-            })}
-          >
-            <i className="format code" />
-          </button>
+          {false && (
+            <button
+              type="button"
+              onClick={() => {
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
+              }}
+              className={'popup-item spaced ' + (isCode ? 'active' : '')}
+              title={formatMessage({
+                id: 'lexical.plugin.format.code.title',
+                defaultMessage: 'Insert code block',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.format.code.aria',
+                defaultMessage: 'Insert code block',
+              })}
+            >
+              <i className="format code" />
+            </button>
+          )}
           <button
             type="button"
             onClick={insertLink}
