@@ -89,16 +89,18 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
         return;
       }
 
-      // Generate HTML from current editor state
-      const newFieldValue: FieldValue = {
-        editorState: newValue,
-        htmlString: $generateHtmlFromNodes(editor, null),
-      };
-
-      // Set value for lexical editor
-      onChange({
-        target: { name, type: attribute.type, value: newFieldValue },
+      editor.read(() => {
+        // Generate HTML from current editor state
+        const newFieldValue: FieldValue = {
+          editorState: newValue,
+          htmlString: $generateHtmlFromNodes(editor, null),
+        };
+        // Set value for lexical editor
+        onChange({
+          target: { name, type: attribute.type, value: newFieldValue },
+        });
       });
+
       setFlagUserInput(true);
 
       // Parse lexical document for images and links
