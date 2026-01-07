@@ -75,7 +75,7 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
           setFlagUserInput(false);
           setExpectedEditorState(undefined);
         } else {
-          setExpectedEditorState(value.editorState);
+          setExpectedEditorState(value?.editorState);
         }
       }
     }, [value]);
@@ -85,7 +85,7 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
       newValue: SerializedEditorState<SerializedLexicalNode>
     ) => {
       // Avoid unnecessary draft/modified status of entry
-      if (equal(value.editorState, newValue)) {
+      if (equal(value?.editorState, newValue)) {
         return;
       }
 
