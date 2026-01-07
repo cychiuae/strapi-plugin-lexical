@@ -1,0 +1,56 @@
+.editor-container.customizable-editor-container .PlaygroundEditorTheme__paragraph {
+  margin: 0;
+}
+
+.editor-container.customizable-editor-container
+  .PlaygroundEditorTheme__paragraph
+  ~ .editor-container.customizable-editor-container
+  .PlaygroundEditorTheme__paragraph {
+  margin-top: 0;
+}
+
+.editor-container.customizable-editor-container .PlaygroundEditorTheme__h1 {
+  font-size: 32px;
+  font-weight: normal;
+  margin: 0;
+}
+
+.editor-container.customizable-editor-container .PlaygroundEditorTheme__h2 {
+  font-size: 26px;
+  font-weight: normal;
+  margin: 0;
+}
+
+.editor-container.customizable-editor-container .PlaygroundEditorTheme__h3 {
+  font-size: 22px;
+  font-weight: normal;
+  margin: 0;
+}
+
+.editor-container.customizable-editor-container .PlaygroundEditorTheme__h4 {
+  font-size: 18px;
+  font-weight: normal;
+  margin: 0;
+}
+
+.editor-container.customizable-editor-container .PlaygroundEditorTheme__h5 {
+  font-size: 16px;
+  font-weight: normal;
+  margin: 0;
+}
+
+.editor-container.customizable-editor-container .PlaygroundEditorTheme__h6 {
+  font-size: 14px;
+  font-weight: normal;
+  margin: 0;
+}
+
+.editor-container.customizable-editor-container .toolbar-item.font-size-input {
+  width: 50px;
+}
+
+.customizable-toolbar.toolbar {
+  border-radius: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}

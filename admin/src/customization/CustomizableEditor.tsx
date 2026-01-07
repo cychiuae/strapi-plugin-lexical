@@ -183,6 +183,7 @@ import {
   ENABLE_YOUTUBE_PLUGIN,
 } from './features';
 import '../lexical/styles.css';
+import './styles.css';
 
 interface LexicalEditorProps {
   onChange: (newValue: SerializedEditorState<SerializedLexicalNode>) => void;
@@ -323,7 +324,7 @@ export default function CustomizableEditor(props: LexicalEditorProps): JSX.Eleme
         <CustomizableShortcutsPlugin editor={activeEditor} setIsLinkEditMode={setIsLinkEditMode} />
       )}
       <div
-        className={`editor-container ${showTreeView ? 'tree-view' : ''} ${
+        className={`customizable-editor-container editor-container ${showTreeView ? 'tree-view' : ''} ${
           !isRichText ? 'plain-text' : ''
         }`}
       >

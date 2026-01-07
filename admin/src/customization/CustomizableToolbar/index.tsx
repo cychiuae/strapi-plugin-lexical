@@ -479,11 +479,13 @@ function ElementFormatDropdown({
   value,
   isRTL,
   disabled = false,
+  showAlignmentOptions = true,
 }: {
   editor: LexicalEditor;
   value: ElementFormatType;
   isRTL: boolean;
   disabled: boolean;
+  showAlignmentOptions?: boolean;
 }) {
   const { formatMessage } = useIntl();
   const formatOption = ELEMENT_FORMAT_OPTIONS[value || 'left'];
@@ -498,8 +500,65 @@ function ElementFormatDropdown({
     ENABLE_INDENT ||
     ENABLE_OUTDENT;
 
+  const hasIndentOptions = ENABLE_INDENT || ENABLE_OUTDENT;
+
   if (!hasAnyAlignmentOption) {
     return <></>;
+  }
+
+  // If alignment options are shown separately and we only have indent/outdent, show a simpler dropdown
+  if (!showAlignmentOptions && hasIndentOptions) {
+    return (
+      <DropDown
+        disabled={disabled}
+        buttonIconClassName={`icon ${isRTL ? 'indent' : 'indent'}`}
+        buttonClassName="toolbar-item spaced"
+        buttonAriaLabel={formatMessage({
+          id: 'lexical.plugin.toolbar.indent.aria',
+          defaultMessage: 'Indent options',
+        })}
+        buttonLabel=""
+      >
+        {ENABLE_OUTDENT && (
+          <DropDownItem
+            onClick={() => {
+              editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined);
+            }}
+            className="item wide"
+          >
+            <div className="icon-text-container">
+              <i className={'icon ' + (isRTL ? 'indent' : 'outdent')} />
+              <span className="text">
+                {formatMessage({
+                  id: 'lexical.plugin.toolbar.indent.outdent',
+                  defaultMessage: 'Outdent',
+                })}
+              </span>
+            </div>
+            <span className="shortcut">{SHORTCUTS.OUTDENT}</span>
+          </DropDownItem>
+        )}
+        {ENABLE_INDENT && (
+          <DropDownItem
+            onClick={() => {
+              editor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined);
+            }}
+            className="item wide"
+          >
+            <div className="icon-text-container">
+              <i className={'icon ' + (isRTL ? 'outdent' : 'indent')} />
+              <span className="text">
+                {formatMessage({
+                  id: 'lexical.plugin.toolbar.indent.indent',
+                  defaultMessage: 'Indent',
+                })}
+              </span>
+            </div>
+            <span className="shortcut">{SHORTCUTS.INDENT}</span>
+          </DropDownItem>
+        )}
+      </DropDown>
+    );
   }
 
   return (
@@ -516,7 +575,7 @@ function ElementFormatDropdown({
         defaultMessage: 'Formatting options for text alignment',
       })}
     >
-      {ENABLE_LEFT_ALIGN && (
+      {showAlignmentOptions && ENABLE_LEFT_ALIGN && (
         <DropDownItem
           onClick={() => {
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left');
@@ -535,7 +594,7 @@ function ElementFormatDropdown({
           <span className="shortcut">{SHORTCUTS.LEFT_ALIGN}</span>
         </DropDownItem>
       )}
-      {ENABLE_CENTER_ALIGN && (
+      {showAlignmentOptions && ENABLE_CENTER_ALIGN && (
         <DropDownItem
           onClick={() => {
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center');
@@ -554,7 +613,7 @@ function ElementFormatDropdown({
           <span className="shortcut">{SHORTCUTS.CENTER_ALIGN}</span>
         </DropDownItem>
       )}
-      {ENABLE_RIGHT_ALIGN && (
+      {showAlignmentOptions && ENABLE_RIGHT_ALIGN && (
         <DropDownItem
           onClick={() => {
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right');
@@ -573,7 +632,7 @@ function ElementFormatDropdown({
           <span className="shortcut">{SHORTCUTS.RIGHT_ALIGN}</span>
         </DropDownItem>
       )}
-      {ENABLE_JUSTIFY_ALIGN && (
+      {showAlignmentOptions && ENABLE_JUSTIFY_ALIGN && (
         <DropDownItem
           onClick={() => {
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'justify');
@@ -592,7 +651,7 @@ function ElementFormatDropdown({
           <span className="shortcut">{SHORTCUTS.JUSTIFY_ALIGN}</span>
         </DropDownItem>
       )}
-      {ENABLE_START_ALIGN && (
+      {showAlignmentOptions && ENABLE_START_ALIGN && (
         <DropDownItem
           onClick={() => {
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'start');
@@ -612,7 +671,7 @@ function ElementFormatDropdown({
           </span>
         </DropDownItem>
       )}
-      {ENABLE_END_ALIGN && (
+      {showAlignmentOptions && ENABLE_END_ALIGN && (
         <DropDownItem
           onClick={() => {
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'end');
@@ -986,7 +1045,7 @@ export default function CustomizableToolbar({
   const hasAnyFontControl = ENABLE_FONT_FAMILY || ENABLE_FONT_SIZE;
 
   return (
-    <div className="toolbar">
+    <div className="customizable-toolbar toolbar">
       {ENABLE_UNDO && (
         <button
           disabled={!toolbarState.canUndo || !isEditable}
@@ -1444,28 +1503,257 @@ export default function CustomizableToolbar({
             hasAnyTextFormat ||
             hasAnyColorPicker ||
             hasAnyFontControl) &&
-            hasAnyLinkOrMediaButton && <Divider />}
+            (ENABLE_LEFT_ALIGN ||
+              ENABLE_CENTER_ALIGN ||
+              ENABLE_RIGHT_ALIGN ||
+              ENABLE_JUSTIFY_ALIGN ||
+              ENABLE_START_ALIGN ||
+              ENABLE_END_ALIGN ||
+              ENABLE_INDENT ||
+              ENABLE_OUTDENT ||
+              ENABLE_INSERT_TABLE ||
+              hasAnyLinkOrMediaButton ||
+              hasAnyInsertOption) && <Divider />}
 
-          {ENABLE_INSERT_LINK && (
+          {ENABLE_LEFT_ALIGN && (
             <button
               disabled={!isEditable}
-              onClick={insertLink}
-              className={'toolbar-item spaced ' + (toolbarState.isLink ? 'active' : '')}
-              aria-label={formatMessage({
-                id: 'lexical.plugin.toolbar.insert.link.aria',
-                defaultMessage: 'Insert link',
-              })}
+              onClick={() => {
+                activeEditor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left');
+              }}
+              className={
+                'toolbar-item spaced ' + (toolbarState.elementFormat === 'left' ? 'active' : '')
+              }
               title={formatMessage(
                 {
-                  id: 'lexical.plugin.toolbar.insert.link.title',
-                  defaultMessage: 'Insert link ({shortcut})',
+                  id: 'lexical.plugin.toolbar.align.left.title',
+                  defaultMessage: 'Left Align ({shortcut})',
                 },
-                { shortcut: SHORTCUTS.INSERT_LINK }
+                { shortcut: SHORTCUTS.LEFT_ALIGN }
               )}
               type="button"
+              aria-label={formatMessage({
+                id: 'lexical.plugin.toolbar.align.left',
+                defaultMessage: 'Left Align',
+              })}
             >
-              <i className="format link" />
+              <i className="icon left-align" />
             </button>
+          )}
+          {ENABLE_CENTER_ALIGN && (
+            <button
+              disabled={!isEditable}
+              onClick={() => {
+                activeEditor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center');
+              }}
+              className={
+                'toolbar-item spaced ' + (toolbarState.elementFormat === 'center' ? 'active' : '')
+              }
+              title={formatMessage(
+                {
+                  id: 'lexical.plugin.toolbar.align.center.title',
+                  defaultMessage: 'Center Align ({shortcut})',
+                },
+                { shortcut: SHORTCUTS.CENTER_ALIGN }
+              )}
+              type="button"
+              aria-label={formatMessage({
+                id: 'lexical.plugin.toolbar.align.center',
+                defaultMessage: 'Center Align',
+              })}
+            >
+              <i className="icon center-align" />
+            </button>
+          )}
+          {ENABLE_RIGHT_ALIGN && (
+            <button
+              disabled={!isEditable}
+              onClick={() => {
+                activeEditor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right');
+              }}
+              className={
+                'toolbar-item spaced ' + (toolbarState.elementFormat === 'right' ? 'active' : '')
+              }
+              title={formatMessage(
+                {
+                  id: 'lexical.plugin.toolbar.align.right.title',
+                  defaultMessage: 'Right Align ({shortcut})',
+                },
+                { shortcut: SHORTCUTS.RIGHT_ALIGN }
+              )}
+              type="button"
+              aria-label={formatMessage({
+                id: 'lexical.plugin.toolbar.align.right',
+                defaultMessage: 'Right Align',
+              })}
+            >
+              <i className="icon right-align" />
+            </button>
+          )}
+          {ENABLE_JUSTIFY_ALIGN && (
+            <button
+              disabled={!isEditable}
+              onClick={() => {
+                activeEditor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'justify');
+              }}
+              className={
+                'toolbar-item spaced ' + (toolbarState.elementFormat === 'justify' ? 'active' : '')
+              }
+              title={formatMessage(
+                {
+                  id: 'lexical.plugin.toolbar.align.justify.title',
+                  defaultMessage: 'Justify Align ({shortcut})',
+                },
+                { shortcut: SHORTCUTS.JUSTIFY_ALIGN }
+              )}
+              type="button"
+              aria-label={formatMessage({
+                id: 'lexical.plugin.toolbar.align.justify',
+                defaultMessage: 'Justify Align',
+              })}
+            >
+              <i className="icon justify-align" />
+            </button>
+          )}
+          {ENABLE_START_ALIGN && (
+            <button
+              disabled={!isEditable}
+              onClick={() => {
+                activeEditor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'start');
+              }}
+              className={
+                'toolbar-item spaced ' + (toolbarState.elementFormat === 'start' ? 'active' : '')
+              }
+              title={formatMessage({
+                id: 'lexical.plugin.toolbar.align.start.title',
+                defaultMessage: 'Start Align',
+              })}
+              type="button"
+              aria-label={formatMessage({
+                id: 'lexical.plugin.toolbar.align.start',
+                defaultMessage: 'Start Align',
+              })}
+            >
+              <i
+                className={`icon ${
+                  toolbarState.isRTL
+                    ? ELEMENT_FORMAT_OPTIONS.start.iconRTL
+                    : ELEMENT_FORMAT_OPTIONS.start.icon
+                }`}
+              />
+            </button>
+          )}
+          {ENABLE_END_ALIGN && (
+            <button
+              disabled={!isEditable}
+              onClick={() => {
+                activeEditor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'end');
+              }}
+              className={
+                'toolbar-item spaced ' + (toolbarState.elementFormat === 'end' ? 'active' : '')
+              }
+              title={formatMessage({
+                id: 'lexical.plugin.toolbar.align.end.title',
+                defaultMessage: 'End Align',
+              })}
+              type="button"
+              aria-label={formatMessage({
+                id: 'lexical.plugin.toolbar.align.end',
+                defaultMessage: 'End Align',
+              })}
+            >
+              <i
+                className={`icon ${
+                  toolbarState.isRTL
+                    ? ELEMENT_FORMAT_OPTIONS.end.iconRTL
+                    : ELEMENT_FORMAT_OPTIONS.end.icon
+                }`}
+              />
+            </button>
+          )}
+          {(ENABLE_INDENT || ENABLE_OUTDENT) &&
+            (ENABLE_LEFT_ALIGN ||
+              ENABLE_CENTER_ALIGN ||
+              ENABLE_RIGHT_ALIGN ||
+              ENABLE_JUSTIFY_ALIGN ||
+              ENABLE_START_ALIGN ||
+              ENABLE_END_ALIGN) && <Divider />}
+          {(ENABLE_INDENT || ENABLE_OUTDENT) && (
+            <ElementFormatDropdown
+              disabled={!isEditable}
+              value={toolbarState.elementFormat}
+              editor={activeEditor}
+              isRTL={toolbarState.isRTL}
+              showAlignmentOptions={false}
+            />
+          )}
+          {ENABLE_INSERT_TABLE && (
+            <>
+              {(ENABLE_LEFT_ALIGN ||
+                ENABLE_CENTER_ALIGN ||
+                ENABLE_RIGHT_ALIGN ||
+                ENABLE_JUSTIFY_ALIGN ||
+                ENABLE_START_ALIGN ||
+                ENABLE_END_ALIGN ||
+                ENABLE_INDENT ||
+                ENABLE_OUTDENT) && <Divider />}
+              <button
+                disabled={!isEditable}
+                onClick={() => {
+                  showModal(
+                    formatMessage({
+                      id: 'lexical.plugin.toolbar.insert.table.modal.title',
+                      defaultMessage: 'Insert Table',
+                    }),
+                    (onClose) => <InsertTableDialog activeEditor={activeEditor} onClose={onClose} />
+                  );
+                }}
+                className="toolbar-item spaced"
+                title={formatMessage({
+                  id: 'lexical.plugin.toolbar.insert.table.title',
+                  defaultMessage: 'Insert Table',
+                })}
+                type="button"
+                aria-label={formatMessage({
+                  id: 'lexical.plugin.toolbar.insert.table.text',
+                  defaultMessage: 'Table',
+                })}
+              >
+                <i className="icon table" />
+              </button>
+            </>
+          )}
+          {ENABLE_INSERT_LINK && (
+            <>
+              {(ENABLE_INSERT_TABLE ||
+                ENABLE_LEFT_ALIGN ||
+                ENABLE_CENTER_ALIGN ||
+                ENABLE_RIGHT_ALIGN ||
+                ENABLE_JUSTIFY_ALIGN ||
+                ENABLE_START_ALIGN ||
+                ENABLE_END_ALIGN ||
+                ENABLE_INDENT ||
+                ENABLE_OUTDENT) && <Divider />}
+              <button
+                disabled={!isEditable}
+                onClick={insertLink}
+                className={'toolbar-item spaced ' + (toolbarState.isLink ? 'active' : '')}
+                aria-label={formatMessage({
+                  id: 'lexical.plugin.toolbar.insert.link.aria',
+                  defaultMessage: 'Insert link',
+                })}
+                title={formatMessage(
+                  {
+                    id: 'lexical.plugin.toolbar.insert.link.title',
+                    defaultMessage: 'Insert link ({shortcut})',
+                  },
+                  { shortcut: SHORTCUTS.INSERT_LINK }
+                )}
+                type="button"
+              >
+                <i className="format link" />
+              </button>
+            </>
           )}
           {ENABLE_INSERT_STRAPI_IMAGE && (
             <button
@@ -1484,20 +1772,11 @@ export default function CustomizableToolbar({
               <i className="format image" />
             </button>
           )}
-
-          {hasAnyLinkOrMediaButton && hasAnyAlignmentOption && <Divider />}
-
-          {hasAnyAlignmentOption && (
-            <ElementFormatDropdown
-              disabled={!isEditable}
-              value={toolbarState.elementFormat}
-              editor={activeEditor}
-              isRTL={toolbarState.isRTL}
-            />
-          )}
           {canViewerSeeInsertDropdown && hasAnyInsertOption && (
             <>
-              {hasAnyAlignmentOption && <Divider />}
+              {(ENABLE_INSERT_TABLE || ENABLE_INSERT_LINK || ENABLE_INSERT_STRAPI_IMAGE) && (
+                <Divider />
+              )}
               <DropDown
                 disabled={!isEditable}
                 buttonClassName="toolbar-item spaced"
@@ -1587,30 +1866,6 @@ export default function CustomizableToolbar({
                       {formatMessage({
                         id: 'lexical.plugin.toolbar.insert.inlineimage.text',
                         defaultMessage: 'Inline Image',
-                      })}
-                    </span>
-                  </DropDownItem>
-                )}
-                {ENABLE_INSERT_TABLE && (
-                  <DropDownItem
-                    onClick={() => {
-                      showModal(
-                        formatMessage({
-                          id: 'lexical.plugin.toolbar.insert.table.modal.title',
-                          defaultMessage: 'Insert Table',
-                        }),
-                        (onClose) => (
-                          <InsertTableDialog activeEditor={activeEditor} onClose={onClose} />
-                        )
-                      );
-                    }}
-                    className="item"
-                  >
-                    <i className="icon table" />
-                    <span className="text">
-                      {formatMessage({
-                        id: 'lexical.plugin.toolbar.insert.table.text',
-                        defaultMessage: 'Table',
                       })}
                     </span>
                   </DropDownItem>
