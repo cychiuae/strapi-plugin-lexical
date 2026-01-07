@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "0.3.1",
   "keywords": [],
   "type": "commonjs",
   "exports": {
@@ -90,7 +90,7 @@
     "displayName": "Lexical WYSIWYG Editor",
     "description": "Adds a custom field with the lexical WYSIWYG editor"
   },
-  "name": "strapi-plugin-lexical",
+  "name": "@cychiuae/strapi-plugin-lexical",
   "description": "Adds a custom field with the lexical WYSIWYG editor",
   "license": "MIT",
   "repository": {
