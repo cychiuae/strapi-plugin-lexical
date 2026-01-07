@@ -8,7 +8,7 @@ import { MessageDescriptor, useIntl } from 'react-intl';
 import { InitialConfigType, LexicalComposer } from '@lexical/react/LexicalComposer';
 import { SerializedEditorState, SerializedElementNode, SerializedLexicalNode } from 'lexical';
 
-import LexicalEditor from '../lexical/Editor';
+import CustomizableEditor from '../customization/CustomizableEditor';
 import { FlashMessageContext } from '../lexical/context/FlashMessageContext';
 import { ToolbarContext } from '../lexical/context/ToolbarContext';
 import { TableContext } from '../lexical/plugins/TablePlugin';
@@ -246,7 +246,7 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
               <LexicalComposer initialConfig={initialConfig}>
                 <TableContext>
                   <ToolbarContext>
-                    <LexicalEditor
+                    <CustomizableEditor
                       onChange={handleChangeCb}
                       ref={ref}
                       fieldName={name}
