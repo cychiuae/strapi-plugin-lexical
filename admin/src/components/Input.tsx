@@ -6,7 +6,12 @@ import { debounce } from 'lodash';
 import { MessageDescriptor, useIntl } from 'react-intl';
 
 import { InitialConfigType, LexicalComposer } from '@lexical/react/LexicalComposer';
-import { SerializedEditorState, SerializedElementNode, SerializedLexicalNode } from 'lexical';
+import {
+  LexicalEditor,
+  SerializedEditorState,
+  SerializedElementNode,
+  SerializedLexicalNode,
+} from 'lexical';
 
 import CustomizableEditor from '../customization/CustomizableEditor';
 import { FlashMessageContext } from '../lexical/context/FlashMessageContext';
@@ -21,6 +26,12 @@ import { InputProps } from '@strapi/strapi/admin';
 import { SerializedStrapiImageNode } from '../lexical/nodes/StrapiImageNode';
 
 import equal from 'fast-deep-equal';
+import { $generateHtmlFromNodes } from '@lexical/html';
+
+interface FieldValue {
+  htmlString: string;
+  editorState: SerializedEditorState<SerializedLexicalNode>;
+}
 
 interface CustomFieldsComponentProps {
   attribute: {
@@ -30,7 +41,7 @@ interface CustomFieldsComponentProps {
   description: MessageDescriptor;
   placeholder: MessageDescriptor;
   onChange: (event: { target: { name: string; value: unknown; type: string } }) => void;
-  value: SerializedEditorState<SerializedLexicalNode>;
+  value: FieldValue;
   error: MessageDescriptor;
 }
 interface Relation {
@@ -54,8 +65,7 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
 
     const [flagUserInput, setFlagUserInput] = React.useState(false);
 
-    const [lastValue, setLastValue] =
-      React.useState<SerializedEditorState<SerializedLexicalNode>>(value);
+    const [lastValue, setLastValue] = React.useState<FieldValue>(value);
 
     // Detect value change from strapi ("outside")
     React.useEffect(() => {
@@ -65,20 +75,29 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
           setFlagUserInput(false);
           setExpectedEditorState(undefined);
         } else {
-          setExpectedEditorState(value);
+          setExpectedEditorState(value.editorState);
         }
       }
     }, [value]);
 
-    const handleChange = async (newValue: SerializedEditorState<SerializedLexicalNode>) => {
+    const handleChange = async (
+      editor: LexicalEditor,
+      newValue: SerializedEditorState<SerializedLexicalNode>
+    ) => {
       // Avoid unnecessary draft/modified status of entry
-      if (equal(value, newValue)) {
+      if (equal(value.editorState, newValue)) {
         return;
       }
 
+      // Generate HTML from current editor state
+      const newFieldValue: FieldValue = {
+        editorState: newValue,
+        htmlString: $generateHtmlFromNodes(editor, null),
+      };
+
       // Set value for lexical editor
       onChange({
-        target: { name, type: attribute.type, value: newValue },
+        target: { name, type: attribute.type, value: newFieldValue },
       });
       setFlagUserInput(true);
 
@@ -214,8 +233,8 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
 
     const handleChangeCb = React.useCallback(
       debounce(
-        async (newValue: SerializedEditorState<SerializedLexicalNode>) => {
-          await handleChange(newValue);
+        async (editor: LexicalEditor, newValue: SerializedEditorState<SerializedLexicalNode>) => {
+          await handleChange(editor, newValue);
         },
         300,
         { maxWait: 1500 }
@@ -226,7 +245,12 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
     const initialConfig = React.useMemo<InitialConfigType>(
       () => ({
         editorState:
-          value && value.root && value.root.children.length ? JSON.stringify(value) : undefined,
+          value &&
+          value.editorState &&
+          value.editorState.root &&
+          value.editorState.root.children.length
+            ? JSON.stringify(value.editorState)
+            : undefined,
         namespace: 'Lexical',
         nodes: [...Nodes],
         onError: (error: Error) => {

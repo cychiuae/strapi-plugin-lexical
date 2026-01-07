@@ -20,7 +20,7 @@ import { useLexicalEditable } from '@lexical/react/useLexicalEditable';
 import { useEffect, useState } from 'react';
 import { CAN_USE_DOM } from '../lexical/utils/environment';
 
-import { EditorState, SerializedEditorState, SerializedLexicalNode } from 'lexical';
+import { EditorState, LexicalEditor, SerializedEditorState, SerializedLexicalNode } from 'lexical';
 import { useSharedHistoryContext } from '../lexical/context/SharedHistoryContext';
 import ActionsPlugin from '../lexical/plugins/ActionsPlugin';
 import AutocompletePlugin from '../lexical/plugins/AutocompletePlugin';
@@ -186,7 +186,7 @@ import '../lexical/styles.css';
 import './styles.css';
 
 interface LexicalEditorProps {
-  onChange: (newValue: SerializedEditorState<SerializedLexicalNode>) => void;
+  onChange: (editor: LexicalEditor, newValue: SerializedEditorState<SerializedLexicalNode>) => void;
   ref: React.ForwardedRef<HTMLDivElement>;
   fieldName: string;
   expectedEditorState?: SerializedEditorState<SerializedLexicalNode>;
@@ -254,7 +254,7 @@ export default function CustomizableEditor(props: LexicalEditorProps): JSX.Eleme
 
   function onChange(editorState: EditorState) {
     const editorStateJSON = editorState.toJSON();
-    props.onChange(editorStateJSON);
+    props.onChange(editor, editorStateJSON);
   }
 
   const hasAnyToolbarFeature =
