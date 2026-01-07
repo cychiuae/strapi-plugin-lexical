@@ -1022,7 +1022,6 @@ export default function CustomizableToolbar({
     ENABLE_PAGE_BREAK ||
     ENABLE_INSERT_IMAGE ||
     ENABLE_INSERT_INLINE_IMAGE ||
-    ENABLE_INSERT_TABLE ||
     ENABLE_POLL ||
     ENABLE_COLUMNS_LAYOUT ||
     ENABLE_EQUATION ||
