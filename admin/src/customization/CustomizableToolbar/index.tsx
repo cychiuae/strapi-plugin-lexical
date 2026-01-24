@@ -83,60 +83,7 @@ import {
 } from '../../lexical/plugins/ToolbarPlugin/utils';
 import FontSize from '../../lexical/plugins/ToolbarPlugin/fontSize';
 import DropdownColorPicker from '../../lexical/ui/DropdownColorPicker';
-import {
-  ENABLE_BACKGROUND_COLOR,
-  ENABLE_BOLD,
-  ENABLE_BULLET_LIST,
-  ENABLE_CAPITALIZE,
-  ENABLE_CENTER_ALIGN,
-  ENABLE_CHECK_LIST,
-  ENABLE_CLEAR_FORMATTING,
-  ENABLE_CODE_BLOCK,
-  ENABLE_CODE_LANGUAGE_SELECTOR,
-  ENABLE_COLLAPSIBLE_CONTAINER,
-  ENABLE_COLUMNS_LAYOUT,
-  ENABLE_DECREASE_FONT_SIZE,
-  ENABLE_END_ALIGN,
-  ENABLE_EQUATION,
-  ENABLE_FIGMA_EMBED,
-  ENABLE_FONT_COLOR,
-  ENABLE_FONT_FAMILY,
-  ENABLE_FONT_SIZE,
-  ENABLE_HEADING_1,
-  ENABLE_HEADING_2,
-  ENABLE_HEADING_3,
-  ENABLE_HORIZONTAL_RULE,
-  ENABLE_INCREASE_FONT_SIZE,
-  ENABLE_INDENT,
-  ENABLE_INSERT_IMAGE,
-  ENABLE_INSERT_INLINE_IMAGE,
-  ENABLE_INSERT_LINK,
-  ENABLE_INSERT_STRAPI_IMAGE,
-  ENABLE_INSERT_TABLE,
-  ENABLE_ITALIC,
-  ENABLE_INLINE_CODE,
-  ENABLE_JUSTIFY_ALIGN,
-  ENABLE_LEFT_ALIGN,
-  ENABLE_LOWERCASE,
-  ENABLE_NUMBERED_LIST,
-  ENABLE_OUTDENT,
-  ENABLE_PAGE_BREAK,
-  ENABLE_PARAGRAPH,
-  ENABLE_POLL,
-  ENABLE_QUOTE,
-  ENABLE_REDO,
-  ENABLE_RIGHT_ALIGN,
-  ENABLE_START_ALIGN,
-  ENABLE_STICKY_NOTE,
-  ENABLE_STRIKETHROUGH,
-  ENABLE_SUBSCRIPT,
-  ENABLE_SUPERSCRIPT,
-  ENABLE_TWITTER_EMBED,
-  ENABLE_UNDERLINE,
-  ENABLE_UNDO,
-  ENABLE_UPPERCASE,
-  ENABLE_YOUTUBE_EMBED,
-} from '../features';
+import { useFeaturesConfig } from '../../context/FeaturesContext';
 
 const rootTypeToRootName = {
   root: 'Root',
@@ -237,6 +184,7 @@ function BlockFormatDropDown({
   editor: LexicalEditor;
   disabled?: boolean;
 }): JSX.Element {
+  const features = useFeaturesConfig();
   const { formatMessage } = useIntl();
 
   return (
@@ -253,7 +201,7 @@ function BlockFormatDropDown({
         defaultMessage: 'Formatting options for text style',
       })}
     >
-      {ENABLE_PARAGRAPH && (
+      {features.paragraph && (
         <DropDownItem
           className={'item wide ' + dropDownActiveClass(blockType === 'paragraph')}
           onClick={() => formatParagraph(editor)}
@@ -270,7 +218,7 @@ function BlockFormatDropDown({
           <span className="shortcut">{SHORTCUTS.NORMAL}</span>
         </DropDownItem>
       )}
-      {ENABLE_HEADING_1 && (
+      {features.heading1 && (
         <DropDownItem
           className={'item wide ' + dropDownActiveClass(blockType === 'h1')}
           onClick={() => formatHeading(editor, blockType, 'h1')}
@@ -287,7 +235,7 @@ function BlockFormatDropDown({
           <span className="shortcut">{SHORTCUTS.HEADING1}</span>
         </DropDownItem>
       )}
-      {ENABLE_HEADING_2 && (
+      {features.heading2 && (
         <DropDownItem
           className={'item wide ' + dropDownActiveClass(blockType === 'h2')}
           onClick={() => formatHeading(editor, blockType, 'h2')}
@@ -304,7 +252,7 @@ function BlockFormatDropDown({
           <span className="shortcut">{SHORTCUTS.HEADING2}</span>
         </DropDownItem>
       )}
-      {ENABLE_HEADING_3 && (
+      {features.heading3 && (
         <DropDownItem
           className={'item wide ' + dropDownActiveClass(blockType === 'h3')}
           onClick={() => formatHeading(editor, blockType, 'h3')}
@@ -321,7 +269,7 @@ function BlockFormatDropDown({
           <span className="shortcut">{SHORTCUTS.HEADING3}</span>
         </DropDownItem>
       )}
-      {ENABLE_BULLET_LIST && (
+      {features.bulletList && (
         <DropDownItem
           className={'item wide ' + dropDownActiveClass(blockType === 'bullet')}
           onClick={() => formatBulletList(editor, blockType)}
@@ -338,7 +286,7 @@ function BlockFormatDropDown({
           <span className="shortcut">{SHORTCUTS.BULLET_LIST}</span>
         </DropDownItem>
       )}
-      {ENABLE_NUMBERED_LIST && (
+      {features.numberedList && (
         <DropDownItem
           className={'item wide ' + dropDownActiveClass(blockType === 'number')}
           onClick={() => formatNumberedList(editor, blockType)}
@@ -355,7 +303,7 @@ function BlockFormatDropDown({
           <span className="shortcut">{SHORTCUTS.NUMBERED_LIST}</span>
         </DropDownItem>
       )}
-      {ENABLE_CHECK_LIST && (
+      {features.checkList && (
         <DropDownItem
           className={'item wide ' + dropDownActiveClass(blockType === 'check')}
           onClick={() => formatCheckList(editor, blockType)}
@@ -372,7 +320,7 @@ function BlockFormatDropDown({
           <span className="shortcut">{SHORTCUTS.CHECK_LIST}</span>
         </DropDownItem>
       )}
-      {ENABLE_QUOTE && (
+      {features.quote && (
         <DropDownItem
           className={'item wide ' + dropDownActiveClass(blockType === 'quote')}
           onClick={() => formatQuote(editor, blockType)}
@@ -389,7 +337,7 @@ function BlockFormatDropDown({
           <span className="shortcut">{SHORTCUTS.QUOTE}</span>
         </DropDownItem>
       )}
-      {ENABLE_CODE_BLOCK && (
+      {features.codeBlock && (
         <DropDownItem
           className={'item wide ' + dropDownActiveClass(blockType === 'code')}
           onClick={() => formatCode(editor, blockType)}
@@ -426,6 +374,7 @@ function FontDropDown({
   style: string;
   disabled?: boolean;
 }): JSX.Element {
+  const features = useFeaturesConfig();
   const { formatMessage } = useIntl();
 
   const handleClick = useCallback(
@@ -487,20 +436,21 @@ function ElementFormatDropdown({
   disabled: boolean;
   showAlignmentOptions?: boolean;
 }) {
+  const features = useFeaturesConfig();
   const { formatMessage } = useIntl();
   const formatOption = ELEMENT_FORMAT_OPTIONS[value || 'left'];
 
   const hasAnyAlignmentOption =
-    ENABLE_LEFT_ALIGN ||
-    ENABLE_CENTER_ALIGN ||
-    ENABLE_RIGHT_ALIGN ||
-    ENABLE_JUSTIFY_ALIGN ||
-    ENABLE_START_ALIGN ||
-    ENABLE_END_ALIGN ||
-    ENABLE_INDENT ||
-    ENABLE_OUTDENT;
+    features.leftAlign ||
+    features.centerAlign ||
+    features.rightAlign ||
+    features.justifyAlign ||
+    features.startAlign ||
+    features.endAlign ||
+    features.indent ||
+    features.outdent;
 
-  const hasIndentOptions = ENABLE_INDENT || ENABLE_OUTDENT;
+  const hasIndentOptions = features.indent || features.outdent;
 
   if (!hasAnyAlignmentOption) {
     return <></>;
@@ -519,7 +469,7 @@ function ElementFormatDropdown({
         })}
         buttonLabel=""
       >
-        {ENABLE_OUTDENT && (
+        {features.outdent && (
           <DropDownItem
             onClick={() => {
               editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined);
@@ -538,7 +488,7 @@ function ElementFormatDropdown({
             <span className="shortcut">{SHORTCUTS.OUTDENT}</span>
           </DropDownItem>
         )}
-        {ENABLE_INDENT && (
+        {features.indent && (
           <DropDownItem
             onClick={() => {
               editor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined);
@@ -575,7 +525,7 @@ function ElementFormatDropdown({
         defaultMessage: 'Formatting options for text alignment',
       })}
     >
-      {showAlignmentOptions && ENABLE_LEFT_ALIGN && (
+      {showAlignmentOptions && features.leftAlign && (
         <DropDownItem
           onClick={() => {
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left');
@@ -594,7 +544,7 @@ function ElementFormatDropdown({
           <span className="shortcut">{SHORTCUTS.LEFT_ALIGN}</span>
         </DropDownItem>
       )}
-      {showAlignmentOptions && ENABLE_CENTER_ALIGN && (
+      {showAlignmentOptions && features.centerAlign && (
         <DropDownItem
           onClick={() => {
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center');
@@ -613,7 +563,7 @@ function ElementFormatDropdown({
           <span className="shortcut">{SHORTCUTS.CENTER_ALIGN}</span>
         </DropDownItem>
       )}
-      {showAlignmentOptions && ENABLE_RIGHT_ALIGN && (
+      {showAlignmentOptions && features.rightAlign && (
         <DropDownItem
           onClick={() => {
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right');
@@ -632,7 +582,7 @@ function ElementFormatDropdown({
           <span className="shortcut">{SHORTCUTS.RIGHT_ALIGN}</span>
         </DropDownItem>
       )}
-      {showAlignmentOptions && ENABLE_JUSTIFY_ALIGN && (
+      {showAlignmentOptions && features.justifyAlign && (
         <DropDownItem
           onClick={() => {
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'justify');
@@ -651,7 +601,7 @@ function ElementFormatDropdown({
           <span className="shortcut">{SHORTCUTS.JUSTIFY_ALIGN}</span>
         </DropDownItem>
       )}
-      {showAlignmentOptions && ENABLE_START_ALIGN && (
+      {showAlignmentOptions && features.startAlign && (
         <DropDownItem
           onClick={() => {
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'start');
@@ -671,7 +621,7 @@ function ElementFormatDropdown({
           </span>
         </DropDownItem>
       )}
-      {showAlignmentOptions && ENABLE_END_ALIGN && (
+      {showAlignmentOptions && features.endAlign && (
         <DropDownItem
           onClick={() => {
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'end');
@@ -691,8 +641,8 @@ function ElementFormatDropdown({
           </span>
         </DropDownItem>
       )}
-      {(ENABLE_INDENT || ENABLE_OUTDENT) && <Divider />}
-      {ENABLE_OUTDENT && (
+      {(features.indent || features.outdent) && <Divider />}
+      {features.outdent && (
         <DropDownItem
           onClick={() => {
             editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined);
@@ -711,7 +661,7 @@ function ElementFormatDropdown({
           <span className="shortcut">{SHORTCUTS.OUTDENT}</span>
         </DropDownItem>
       )}
-      {ENABLE_INDENT && (
+      {features.indent && (
         <DropDownItem
           onClick={() => {
             editor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined);
@@ -745,6 +695,7 @@ export default function CustomizableToolbar({
   setActiveEditor: Dispatch<LexicalEditor>;
   setIsLinkEditMode: Dispatch<boolean>;
 }): JSX.Element {
+  const features = useFeaturesConfig();
   const { formatMessage } = useIntl();
 
   const [selectedElementKey, setSelectedElementKey] = useState<NodeKey | null>(null);
@@ -986,66 +937,67 @@ export default function CustomizableToolbar({
   }>;
 
   const hasAnyBlockFormat =
-    ENABLE_PARAGRAPH ||
-    ENABLE_HEADING_1 ||
-    ENABLE_HEADING_2 ||
-    ENABLE_HEADING_3 ||
-    ENABLE_BULLET_LIST ||
-    ENABLE_NUMBERED_LIST ||
-    ENABLE_CHECK_LIST ||
-    ENABLE_QUOTE ||
-    ENABLE_CODE_BLOCK;
+    features.paragraph ||
+    features.heading1 ||
+    features.heading2 ||
+    features.heading3 ||
+    features.bulletList ||
+    features.numberedList ||
+    features.checkList ||
+    features.quote ||
+    features.codeBlock;
 
-  const hasAnyTextFormat = ENABLE_BOLD || ENABLE_ITALIC || ENABLE_UNDERLINE || ENABLE_INLINE_CODE;
+  const hasAnyTextFormat =
+    features.bold || features.italic || features.underline || features.inlineCode;
 
   const hasAnyAdvancedTextFormat =
-    ENABLE_LOWERCASE ||
-    ENABLE_UPPERCASE ||
-    ENABLE_CAPITALIZE ||
-    ENABLE_STRIKETHROUGH ||
-    ENABLE_SUBSCRIPT ||
-    ENABLE_SUPERSCRIPT ||
-    ENABLE_CLEAR_FORMATTING;
+    features.lowercase ||
+    features.uppercase ||
+    features.capitalize ||
+    features.strikethrough ||
+    features.subscript ||
+    features.superscript ||
+    features.clearFormatting;
 
   const hasAnyAlignmentOption =
-    ENABLE_LEFT_ALIGN ||
-    ENABLE_CENTER_ALIGN ||
-    ENABLE_RIGHT_ALIGN ||
-    ENABLE_JUSTIFY_ALIGN ||
-    ENABLE_START_ALIGN ||
-    ENABLE_END_ALIGN ||
-    ENABLE_INDENT ||
-    ENABLE_OUTDENT;
+    features.leftAlign ||
+    features.centerAlign ||
+    features.rightAlign ||
+    features.justifyAlign ||
+    features.startAlign ||
+    features.endAlign ||
+    features.indent ||
+    features.outdent;
 
   const hasAnyInsertOption =
-    ENABLE_HORIZONTAL_RULE ||
-    ENABLE_PAGE_BREAK ||
-    ENABLE_INSERT_IMAGE ||
-    ENABLE_INSERT_INLINE_IMAGE ||
-    ENABLE_POLL ||
-    ENABLE_COLUMNS_LAYOUT ||
-    ENABLE_EQUATION ||
-    ENABLE_STICKY_NOTE ||
-    ENABLE_COLLAPSIBLE_CONTAINER ||
-    ENABLE_TWITTER_EMBED ||
-    ENABLE_YOUTUBE_EMBED ||
-    ENABLE_FIGMA_EMBED;
+    features.horizontalRule ||
+    features.pageBreak ||
+    features.insertImage ||
+    features.insertInlineImage ||
+    features.poll ||
+    features.columnsLayout ||
+    features.equation ||
+    features.stickyNote ||
+    features.collapsibleContainer ||
+    features.twitterEmbed ||
+    features.youtubeEmbed ||
+    features.figmaEmbed;
 
   const filteredEmbedConfigs = EmbedConfigs.filter((config) => {
-    if (config.type === 'youtube-video') return ENABLE_YOUTUBE_EMBED;
-    if (config.type === 'tweet') return ENABLE_TWITTER_EMBED;
-    if (config.type === 'figma') return ENABLE_FIGMA_EMBED;
+    if (config.type === 'youtube-video') return features.youtubeEmbed;
+    if (config.type === 'tweet') return features.twitterEmbed;
+    if (config.type === 'figma') return features.figmaEmbed;
     return false;
   });
 
-  const hasAnyHistoryButton = ENABLE_UNDO || ENABLE_REDO;
-  const hasAnyLinkOrMediaButton = ENABLE_INSERT_LINK || ENABLE_INSERT_STRAPI_IMAGE;
-  const hasAnyColorPicker = ENABLE_FONT_COLOR || ENABLE_BACKGROUND_COLOR;
-  const hasAnyFontControl = ENABLE_FONT_FAMILY || ENABLE_FONT_SIZE;
+  const hasAnyHistoryButton = features.undo || features.redo;
+  const hasAnyLinkOrMediaButton = features.insertLink || features.insertStrapiImage;
+  const hasAnyColorPicker = features.fontColor || features.backgroundColor;
+  const hasAnyFontControl = features.fontFamily || features.fontSize;
 
   return (
     <div className="customizable-toolbar toolbar">
-      {ENABLE_UNDO && (
+      {features.undo && (
         <button
           disabled={!toolbarState.canUndo || !isEditable}
           onClick={() => {
@@ -1065,7 +1017,7 @@ export default function CustomizableToolbar({
           <i className="format undo" />
         </button>
       )}
-      {ENABLE_REDO && (
+      {features.redo && (
         <button
           disabled={!toolbarState.canRedo || !isEditable}
           onClick={() => {
@@ -1085,7 +1037,7 @@ export default function CustomizableToolbar({
           <i className="format redo" />
         </button>
       )}
-      {isStrapiImageDialogOpen && ENABLE_INSERT_STRAPI_IMAGE && (
+      {isStrapiImageDialogOpen && features.insertStrapiImage && (
         <InsertStrapiImageDialog
           MediaLibraryDialog={MediaLibraryDialog}
           activeEditor={activeEditor}
@@ -1117,7 +1069,7 @@ export default function CustomizableToolbar({
               hasAnyInsertOption) && <Divider />}
           </>
         )}
-      {ENABLE_CODE_BLOCK && ENABLE_CODE_LANGUAGE_SELECTOR && toolbarState.blockType === 'code' ? (
+      {features.codeBlock && features.codeLanguageSelector && toolbarState.blockType === 'code' ? (
         <DropDown
           disabled={!isEditable}
           buttonClassName="toolbar-item code-language"
@@ -1138,7 +1090,7 @@ export default function CustomizableToolbar({
         </DropDown>
       ) : (
         <>
-          {ENABLE_FONT_FAMILY && (
+          {features.fontFamily && (
             <>
               <FontDropDown
                 disabled={!isEditable}
@@ -1149,13 +1101,13 @@ export default function CustomizableToolbar({
               {(hasAnyTextFormat ||
                 hasAnyAdvancedTextFormat ||
                 hasAnyColorPicker ||
-                ENABLE_FONT_SIZE ||
+                features.fontSize ||
                 hasAnyLinkOrMediaButton ||
                 hasAnyAlignmentOption ||
                 hasAnyInsertOption) && <Divider />}
             </>
           )}
-          {ENABLE_FONT_SIZE && (
+          {features.fontSize && (
             <>
               <FontSize
                 selectionFontSize={toolbarState.fontSize.slice(0, -2)}
@@ -1170,7 +1122,7 @@ export default function CustomizableToolbar({
                 hasAnyInsertOption) && <Divider />}
             </>
           )}
-          {ENABLE_BOLD && (
+          {features.bold && (
             <button
               disabled={!isEditable}
               onClick={() => {
@@ -1193,7 +1145,7 @@ export default function CustomizableToolbar({
               <i className="format bold" />
             </button>
           )}
-          {ENABLE_ITALIC && (
+          {features.italic && (
             <button
               disabled={!isEditable}
               onClick={() => {
@@ -1216,7 +1168,7 @@ export default function CustomizableToolbar({
               <i className="format italic" />
             </button>
           )}
-          {ENABLE_UNDERLINE && (
+          {features.underline && (
             <button
               disabled={!isEditable}
               onClick={() => {
@@ -1239,7 +1191,7 @@ export default function CustomizableToolbar({
               <i className="format underline" />
             </button>
           )}
-          {ENABLE_INLINE_CODE && canViewerSeeInsertCodeButton && (
+          {features.inlineCode && canViewerSeeInsertCodeButton && (
             <button
               disabled={!isEditable}
               onClick={() => {
@@ -1262,7 +1214,7 @@ export default function CustomizableToolbar({
               <i className="format code" />
             </button>
           )}
-          {ENABLE_FONT_COLOR && (
+          {features.fontColor && (
             <>
               <DropdownColorPicker
                 disabled={!isEditable}
@@ -1274,13 +1226,13 @@ export default function CustomizableToolbar({
                 title="text color"
               />
               {(hasAnyAdvancedTextFormat ||
-                ENABLE_BACKGROUND_COLOR ||
+                features.backgroundColor ||
                 hasAnyLinkOrMediaButton ||
                 hasAnyAlignmentOption ||
                 hasAnyInsertOption) && <Divider />}
             </>
           )}
-          {ENABLE_BACKGROUND_COLOR && (
+          {features.backgroundColor && (
             <>
               <DropdownColorPicker
                 disabled={!isEditable}
@@ -1308,7 +1260,7 @@ export default function CustomizableToolbar({
               })}
               buttonIconClassName="icon dropdown-more"
             >
-              {ENABLE_LOWERCASE && (
+              {features.lowercase && (
                 <DropDownItem
                   onClick={() => {
                     activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'lowercase');
@@ -1335,7 +1287,7 @@ export default function CustomizableToolbar({
                   <span className="shortcut">{SHORTCUTS.LOWERCASE}</span>
                 </DropDownItem>
               )}
-              {ENABLE_UPPERCASE && (
+              {features.uppercase && (
                 <DropDownItem
                   onClick={() => {
                     activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'uppercase');
@@ -1362,7 +1314,7 @@ export default function CustomizableToolbar({
                   <span className="shortcut">{SHORTCUTS.UPPERCASE}</span>
                 </DropDownItem>
               )}
-              {ENABLE_CAPITALIZE && (
+              {features.capitalize && (
                 <DropDownItem
                   onClick={() => {
                     activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'capitalize');
@@ -1389,7 +1341,7 @@ export default function CustomizableToolbar({
                   <span className="shortcut">{SHORTCUTS.CAPITALIZE}</span>
                 </DropDownItem>
               )}
-              {ENABLE_STRIKETHROUGH && (
+              {features.strikethrough && (
                 <DropDownItem
                   onClick={() => {
                     activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
@@ -1416,7 +1368,7 @@ export default function CustomizableToolbar({
                   <span className="shortcut">{SHORTCUTS.STRIKETHROUGH}</span>
                 </DropDownItem>
               )}
-              {ENABLE_SUBSCRIPT && (
+              {features.subscript && (
                 <DropDownItem
                   onClick={() => {
                     activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
@@ -1443,7 +1395,7 @@ export default function CustomizableToolbar({
                   <span className="shortcut">{SHORTCUTS.SUBSCRIPT}</span>
                 </DropDownItem>
               )}
-              {ENABLE_SUPERSCRIPT && (
+              {features.superscript && (
                 <DropDownItem
                   onClick={() => {
                     activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
@@ -1470,7 +1422,7 @@ export default function CustomizableToolbar({
                   <span className="shortcut">{SHORTCUTS.SUPERSCRIPT}</span>
                 </DropDownItem>
               )}
-              {ENABLE_CLEAR_FORMATTING && (
+              {features.clearFormatting && (
                 <DropDownItem
                   onClick={() => clearFormatting(activeEditor)}
                   className="item wide"
@@ -1502,19 +1454,19 @@ export default function CustomizableToolbar({
             hasAnyTextFormat ||
             hasAnyColorPicker ||
             hasAnyFontControl) &&
-            (ENABLE_LEFT_ALIGN ||
-              ENABLE_CENTER_ALIGN ||
-              ENABLE_RIGHT_ALIGN ||
-              ENABLE_JUSTIFY_ALIGN ||
-              ENABLE_START_ALIGN ||
-              ENABLE_END_ALIGN ||
-              ENABLE_INDENT ||
-              ENABLE_OUTDENT ||
-              ENABLE_INSERT_TABLE ||
+            (features.leftAlign ||
+              features.centerAlign ||
+              features.rightAlign ||
+              features.justifyAlign ||
+              features.startAlign ||
+              features.endAlign ||
+              features.indent ||
+              features.outdent ||
+              features.insertTable ||
               hasAnyLinkOrMediaButton ||
               hasAnyInsertOption) && <Divider />}
 
-          {ENABLE_LEFT_ALIGN && (
+          {features.leftAlign && (
             <button
               disabled={!isEditable}
               onClick={() => {
@@ -1539,7 +1491,7 @@ export default function CustomizableToolbar({
               <i className="icon left-align" />
             </button>
           )}
-          {ENABLE_CENTER_ALIGN && (
+          {features.centerAlign && (
             <button
               disabled={!isEditable}
               onClick={() => {
@@ -1564,7 +1516,7 @@ export default function CustomizableToolbar({
               <i className="icon center-align" />
             </button>
           )}
-          {ENABLE_RIGHT_ALIGN && (
+          {features.rightAlign && (
             <button
               disabled={!isEditable}
               onClick={() => {
@@ -1589,7 +1541,7 @@ export default function CustomizableToolbar({
               <i className="icon right-align" />
             </button>
           )}
-          {ENABLE_JUSTIFY_ALIGN && (
+          {features.justifyAlign && (
             <button
               disabled={!isEditable}
               onClick={() => {
@@ -1614,7 +1566,7 @@ export default function CustomizableToolbar({
               <i className="icon justify-align" />
             </button>
           )}
-          {ENABLE_START_ALIGN && (
+          {features.startAlign && (
             <button
               disabled={!isEditable}
               onClick={() => {
@@ -1642,7 +1594,7 @@ export default function CustomizableToolbar({
               />
             </button>
           )}
-          {ENABLE_END_ALIGN && (
+          {features.endAlign && (
             <button
               disabled={!isEditable}
               onClick={() => {
@@ -1670,14 +1622,14 @@ export default function CustomizableToolbar({
               />
             </button>
           )}
-          {(ENABLE_INDENT || ENABLE_OUTDENT) &&
-            (ENABLE_LEFT_ALIGN ||
-              ENABLE_CENTER_ALIGN ||
-              ENABLE_RIGHT_ALIGN ||
-              ENABLE_JUSTIFY_ALIGN ||
-              ENABLE_START_ALIGN ||
-              ENABLE_END_ALIGN) && <Divider />}
-          {(ENABLE_INDENT || ENABLE_OUTDENT) && (
+          {(features.indent || features.outdent) &&
+            (features.leftAlign ||
+              features.centerAlign ||
+              features.rightAlign ||
+              features.justifyAlign ||
+              features.startAlign ||
+              features.endAlign) && <Divider />}
+          {(features.indent || features.outdent) && (
             <ElementFormatDropdown
               disabled={!isEditable}
               value={toolbarState.elementFormat}
@@ -1686,16 +1638,16 @@ export default function CustomizableToolbar({
               showAlignmentOptions={false}
             />
           )}
-          {ENABLE_INSERT_TABLE && (
+          {features.insertTable && (
             <>
-              {(ENABLE_LEFT_ALIGN ||
-                ENABLE_CENTER_ALIGN ||
-                ENABLE_RIGHT_ALIGN ||
-                ENABLE_JUSTIFY_ALIGN ||
-                ENABLE_START_ALIGN ||
-                ENABLE_END_ALIGN ||
-                ENABLE_INDENT ||
-                ENABLE_OUTDENT) && <Divider />}
+              {(features.leftAlign ||
+                features.centerAlign ||
+                features.rightAlign ||
+                features.justifyAlign ||
+                features.startAlign ||
+                features.endAlign ||
+                features.indent ||
+                features.outdent) && <Divider />}
               <button
                 disabled={!isEditable}
                 onClick={() => {
@@ -1722,17 +1674,17 @@ export default function CustomizableToolbar({
               </button>
             </>
           )}
-          {ENABLE_INSERT_LINK && (
+          {features.insertLink && (
             <>
-              {(ENABLE_INSERT_TABLE ||
-                ENABLE_LEFT_ALIGN ||
-                ENABLE_CENTER_ALIGN ||
-                ENABLE_RIGHT_ALIGN ||
-                ENABLE_JUSTIFY_ALIGN ||
-                ENABLE_START_ALIGN ||
-                ENABLE_END_ALIGN ||
-                ENABLE_INDENT ||
-                ENABLE_OUTDENT) && <Divider />}
+              {(features.insertTable ||
+                features.leftAlign ||
+                features.centerAlign ||
+                features.rightAlign ||
+                features.justifyAlign ||
+                features.startAlign ||
+                features.endAlign ||
+                features.indent ||
+                features.outdent) && <Divider />}
               <button
                 disabled={!isEditable}
                 onClick={insertLink}
@@ -1754,7 +1706,7 @@ export default function CustomizableToolbar({
               </button>
             </>
           )}
-          {ENABLE_INSERT_STRAPI_IMAGE && (
+          {features.insertStrapiImage && (
             <button
               onClick={() => setIsStrapiImageDialogOpen(true)}
               title={formatMessage({
@@ -1773,7 +1725,7 @@ export default function CustomizableToolbar({
           )}
           {canViewerSeeInsertDropdown && hasAnyInsertOption && (
             <>
-              {(ENABLE_INSERT_TABLE || ENABLE_INSERT_LINK || ENABLE_INSERT_STRAPI_IMAGE) && (
+              {(features.insertTable || features.insertLink || features.insertStrapiImage) && (
                 <Divider />
               )}
               <DropDown
@@ -1789,7 +1741,7 @@ export default function CustomizableToolbar({
                 })}
                 buttonIconClassName="icon plus"
               >
-                {ENABLE_HORIZONTAL_RULE && (
+                {features.horizontalRule && (
                   <DropDownItem
                     onClick={() => {
                       activeEditor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
@@ -1805,7 +1757,7 @@ export default function CustomizableToolbar({
                     </span>
                   </DropDownItem>
                 )}
-                {ENABLE_PAGE_BREAK && (
+                {features.pageBreak && (
                   <DropDownItem
                     onClick={() => {
                       activeEditor.dispatchCommand(INSERT_PAGE_BREAK, undefined);
@@ -1821,7 +1773,7 @@ export default function CustomizableToolbar({
                     </span>
                   </DropDownItem>
                 )}
-                {ENABLE_INSERT_IMAGE && (
+                {features.insertImage && (
                   <DropDownItem
                     onClick={() => {
                       showModal(
@@ -1845,7 +1797,7 @@ export default function CustomizableToolbar({
                     </span>
                   </DropDownItem>
                 )}
-                {ENABLE_INSERT_INLINE_IMAGE && (
+                {features.insertInlineImage && (
                   <DropDownItem
                     onClick={() => {
                       showModal(
@@ -1869,7 +1821,7 @@ export default function CustomizableToolbar({
                     </span>
                   </DropDownItem>
                 )}
-                {ENABLE_POLL && (
+                {features.poll && (
                   <DropDownItem
                     onClick={() => {
                       showModal(
@@ -1893,7 +1845,7 @@ export default function CustomizableToolbar({
                     </span>
                   </DropDownItem>
                 )}
-                {ENABLE_COLUMNS_LAYOUT && (
+                {features.columnsLayout && (
                   <DropDownItem
                     onClick={() => {
                       showModal(
@@ -1917,7 +1869,7 @@ export default function CustomizableToolbar({
                     </span>
                   </DropDownItem>
                 )}
-                {ENABLE_EQUATION && (
+                {features.equation && (
                   <DropDownItem
                     onClick={() => {
                       showModal(
@@ -1941,7 +1893,7 @@ export default function CustomizableToolbar({
                     </span>
                   </DropDownItem>
                 )}
-                {ENABLE_STICKY_NOTE && (
+                {features.stickyNote && (
                   <DropDownItem
                     onClick={() => {
                       editor.update(() => {
@@ -1961,7 +1913,7 @@ export default function CustomizableToolbar({
                     </span>
                   </DropDownItem>
                 )}
-                {ENABLE_COLLAPSIBLE_CONTAINER && (
+                {features.collapsibleContainer && (
                   <DropDownItem
                     onClick={() => {
                       editor.dispatchCommand(INSERT_COLLAPSIBLE_COMMAND, undefined);

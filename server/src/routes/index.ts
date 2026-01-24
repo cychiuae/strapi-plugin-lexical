@@ -23,4 +23,13 @@ export default [
       policies: ['admin::isAuthenticatedAdmin'],
     },
   },
+  {
+    method: 'GET',
+    path: '/features',
+    handler: 'lexicalFeatures.getFeatures',
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
 ];

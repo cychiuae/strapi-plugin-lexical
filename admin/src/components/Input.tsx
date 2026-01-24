@@ -18,6 +18,7 @@ import { FlashMessageContext } from '../lexical/context/FlashMessageContext';
 import { ToolbarContext } from '../lexical/context/ToolbarContext';
 import { TableContext } from '../lexical/plugins/TablePlugin';
 import PlaygroundEditorTheme from '../lexical/themes/PlaygroundEditorTheme';
+import { FeaturesProvider } from '../context/FeaturesContext';
 
 import Nodes from '../lexical/nodes';
 
@@ -52,7 +53,8 @@ interface Relation {
   href: string;
 }
 
-const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & InputProps>(
+// Internal component with the actual Input logic
+const InternalInput = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & InputProps>(
   (props, ref) => {
     const { attribute, name, onChange, required, value, error, hint, labelAction, label } = props;
     const { formatMessage } = useIntl();
@@ -287,6 +289,17 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
           <Field.Error />
         </Flex>
       </Field.Root>
+    );
+  }
+);
+
+// Main Input component wrapped with FeaturesProvider
+const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & InputProps>(
+  (props, ref) => {
+    return (
+      <FeaturesProvider>
+        <InternalInput {...props} ref={ref} />
+      </FeaturesProvider>
     );
   }
 );

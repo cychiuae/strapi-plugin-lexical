@@ -65,123 +65,7 @@ import { useIntl } from 'react-intl';
 import StrapiImagePlugin from '../lexical/plugins/StrapiImagePlugin';
 import CustomizableToolbar from './CustomizableToolbar';
 import CustomizableShortcutsPlugin from './CustomizableShortcutsPlugin';
-import {
-  ENABLE_ACTIONS_PLUGIN,
-  ENABLE_ALLOW_HIGHLIGHTING_WITH_BRACKETS,
-  ENABLE_AUTO_FOCUS_PLUGIN,
-  ENABLE_AUTO_LINK_PLUGIN,
-  ENABLE_AUTO_EMBED_PLUGIN,
-  ENABLE_AUTOCOMPLETE,
-  ENABLE_AUTOCOMPLETE_PLUGIN,
-  ENABLE_BACKGROUND_COLOR,
-  ENABLE_BOLD,
-  ENABLE_BULLET_LIST,
-  ENABLE_CAPITALIZE,
-  ENABLE_CENTER_ALIGN,
-  ENABLE_CHAR_LIMIT,
-  ENABLE_CHAR_LIMIT_UTF8,
-  ENABLE_CHARACTER_LIMIT_PLUGIN,
-  ENABLE_CHECK_LIST,
-  ENABLE_CHECK_LIST_PLUGIN,
-  ENABLE_CLEAR_EDITOR_PLUGIN,
-  ENABLE_CLEAR_FORMATTING,
-  ENABLE_CLICKABLE_LINK_PLUGIN,
-  ENABLE_CODE_ACTION_MENU_PLUGIN,
-  ENABLE_CODE_BLOCK,
-  ENABLE_CODE_HIGHLIGHT_PLUGIN,
-  ENABLE_COLLAPSIBLE_CONTAINER,
-  ENABLE_COLLAPSIBLE_PLUGIN,
-  ENABLE_COLUMNS_LAYOUT,
-  ENABLE_COMPONENT_PICKER_PLUGIN,
-  ENABLE_CONTEXT_MENU_PLUGIN,
-  ENABLE_DECREASE_FONT_SIZE,
-  ENABLE_DRAG_DROP_PASTE_PLUGIN,
-  ENABLE_DRAGGABLE_BLOCK_PLUGIN,
-  ENABLE_EMOJI_PICKER_PLUGIN,
-  ENABLE_EMOJIS_PLUGIN,
-  ENABLE_END_ALIGN,
-  ENABLE_EQUATION,
-  ENABLE_EQUATIONS_PLUGIN,
-  ENABLE_FIGMA_EMBED,
-  ENABLE_FIGMA_PLUGIN,
-  ENABLE_FLOATING_LINK_EDITOR_PLUGIN,
-  ENABLE_FLOATING_TEXT_FORMAT_TOOLBAR_PLUGIN,
-  ENABLE_FONT_COLOR,
-  ENABLE_FONT_FAMILY,
-  ENABLE_FONT_SIZE,
-  ENABLE_HASHTAG_PLUGIN,
-  ENABLE_HEADING_1,
-  ENABLE_HEADING_2,
-  ENABLE_HEADING_3,
-  ENABLE_HISTORY_PLUGIN,
-  ENABLE_HORIZONTAL_RULE,
-  ENABLE_HORIZONTAL_RULE_PLUGIN,
-  ENABLE_IMAGES_PLUGIN,
-  ENABLE_INCREASE_FONT_SIZE,
-  ENABLE_INDENT,
-  ENABLE_INLINE_CODE,
-  ENABLE_INLINE_IMAGE_PLUGIN,
-  ENABLE_INSERT_IMAGE,
-  ENABLE_INSERT_INLINE_IMAGE,
-  ENABLE_INSERT_LINK,
-  ENABLE_INSERT_STRAPI_IMAGE,
-  ENABLE_INSERT_TABLE,
-  ENABLE_ITALIC,
-  ENABLE_JUSTIFY_ALIGN,
-  ENABLE_KEYWORDS_PLUGIN,
-  ENABLE_LAYOUT_PLUGIN,
-  ENABLE_LEFT_ALIGN,
-  ENABLE_LEXICAL_CONTEXT_MENU,
-  ENABLE_LINK_ATTRIBUTES,
-  ENABLE_LINK_PLUGIN,
-  ENABLE_LIST_PLUGIN,
-  ENABLE_LOWERCASE,
-  ENABLE_MARKDOWN_SHORTCUT_PLUGIN,
-  ENABLE_MAX_LENGTH,
-  ENABLE_MAX_LENGTH_PLUGIN,
-  ENABLE_MENTIONS_PLUGIN,
-  ENABLE_NUMBERED_LIST,
-  ENABLE_OUTDENT,
-  ENABLE_PAGE_BREAK,
-  ENABLE_PAGE_BREAK_PLUGIN,
-  ENABLE_PARAGRAPH,
-  ENABLE_POLL,
-  ENABLE_POLL_PLUGIN,
-  ENABLE_PRESERVE_NEW_LINES_IN_MARKDOWN,
-  ENABLE_QUOTE,
-  ENABLE_REDO,
-  ENABLE_RICH_TEXT,
-  ENABLE_RICH_TEXT_PLUGIN,
-  ENABLE_RIGHT_ALIGN,
-  ENABLE_SELECTION_ALWAYS_ON_DISPLAY,
-  ENABLE_SHORTCUTS_PLUGIN,
-  ENABLE_SPECIAL_TEXT_PLUGIN,
-  ENABLE_START_ALIGN,
-  ENABLE_STICKY_NOTE,
-  ENABLE_STRIKETHROUGH,
-  ENABLE_SUBSCRIPT,
-  ENABLE_SUPERSCRIPT,
-  ENABLE_TAB_FOCUS_PLUGIN,
-  ENABLE_TAB_INDENTATION_PLUGIN,
-  ENABLE_TABLE_CELL_ACTION_MENU_PLUGIN,
-  ENABLE_TABLE_CELL_BACKGROUND_COLOR,
-  ENABLE_TABLE_CELL_MERGE,
-  ENABLE_TABLE_CELL_RESIZER,
-  ENABLE_TABLE_HOVER_ACTIONS_PLUGIN,
-  ENABLE_TABLE_HORIZONTAL_SCROLL,
-  ENABLE_TABLE_OF_CONTENTS,
-  ENABLE_TABLE_OF_CONTENTS_PLUGIN,
-  ENABLE_TABLE_PLUGIN,
-  ENABLE_TREE_VIEW,
-  ENABLE_TREE_VIEW_PLUGIN,
-  ENABLE_TWITTER_EMBED,
-  ENABLE_TWITTER_PLUGIN,
-  ENABLE_UNDERLINE,
-  ENABLE_UNDO,
-  ENABLE_UPPERCASE,
-  ENABLE_YOUTUBE_EMBED,
-  ENABLE_YOUTUBE_PLUGIN,
-} from './features';
+import { useFeaturesConfig } from '../context/FeaturesContext';
 import '../lexical/styles.css';
 import './styles.css';
 
@@ -193,25 +77,25 @@ interface LexicalEditorProps {
 }
 
 export default function CustomizableEditor(props: LexicalEditorProps): JSX.Element {
+  const features = useFeaturesConfig();
   const { formatMessage } = useIntl();
   const { historyState } = useSharedHistoryContext();
 
-  const isRichText = ENABLE_RICH_TEXT_PLUGIN;
-  const showTreeView = ENABLE_TREE_VIEW_PLUGIN || ENABLE_TREE_VIEW;
-  const showTableOfContents = ENABLE_TABLE_OF_CONTENTS_PLUGIN || ENABLE_TABLE_OF_CONTENTS;
-  const shouldUseLexicalContextMenu = ENABLE_CONTEXT_MENU_PLUGIN || ENABLE_LEXICAL_CONTEXT_MENU;
-  const shouldPreserveNewLinesInMarkdown = ENABLE_PRESERVE_NEW_LINES_IN_MARKDOWN;
-  const tableCellMerge = ENABLE_TABLE_CELL_MERGE;
-  const tableCellBackgroundColor = ENABLE_TABLE_CELL_BACKGROUND_COLOR;
-  const tableHorizontalScroll = ENABLE_TABLE_HORIZONTAL_SCROLL;
-  const shouldAllowHighlightingWithBrackets =
-    ENABLE_SPECIAL_TEXT_PLUGIN || ENABLE_ALLOW_HIGHLIGHTING_WITH_BRACKETS;
-  const selectionAlwaysOnDisplay = ENABLE_SELECTION_ALWAYS_ON_DISPLAY;
-  const isAutocomplete = ENABLE_AUTOCOMPLETE_PLUGIN || ENABLE_AUTOCOMPLETE;
-  const isMaxLength = ENABLE_MAX_LENGTH_PLUGIN || ENABLE_MAX_LENGTH;
-  const isCharLimit = ENABLE_CHARACTER_LIMIT_PLUGIN || ENABLE_CHAR_LIMIT;
-  const isCharLimitUtf8 = ENABLE_CHARACTER_LIMIT_PLUGIN || ENABLE_CHAR_LIMIT_UTF8;
-  const hasLinkAttributes = ENABLE_LINK_ATTRIBUTES;
+  const isRichText = features.richTextPlugin;
+  const showTreeView = features.treeViewPlugin;
+  const showTableOfContents = features.tableOfContentsPlugin;
+  const shouldUseLexicalContextMenu = features.contextMenuPlugin;
+  const shouldPreserveNewLinesInMarkdown = features.preserveNewLinesInMarkdown;
+  const tableCellMerge = features.tableCellMerge;
+  const tableCellBackgroundColor = features.tableCellBackgroundColor;
+  const tableHorizontalScroll = features.tableHorizontalScroll;
+  const shouldAllowHighlightingWithBrackets = features.allowHighlightingWithBrackets;
+  const selectionAlwaysOnDisplay = features.selectionAlwaysOnDisplay;
+  const isAutocomplete = features.autocompletePlugin;
+  const isMaxLength = features.maxLengthPlugin;
+  const isCharLimit = features.characterLimitPlugin;
+  const isCharLimitUtf8 = features.characterLimitPlugin && features.charLimitUtf8;
+  const hasLinkAttributes = features.linkAttributes;
 
   const isEditable = useLexicalEditable();
   const placeholder = formatMessage(
@@ -258,57 +142,57 @@ export default function CustomizableEditor(props: LexicalEditorProps): JSX.Eleme
   }
 
   const hasAnyToolbarFeature =
-    ENABLE_UNDO ||
-    ENABLE_REDO ||
-    ENABLE_PARAGRAPH ||
-    ENABLE_HEADING_1 ||
-    ENABLE_HEADING_2 ||
-    ENABLE_HEADING_3 ||
-    ENABLE_BULLET_LIST ||
-    ENABLE_NUMBERED_LIST ||
-    ENABLE_CHECK_LIST ||
-    ENABLE_QUOTE ||
-    ENABLE_CODE_BLOCK ||
-    ENABLE_BOLD ||
-    ENABLE_ITALIC ||
-    ENABLE_UNDERLINE ||
-    ENABLE_INLINE_CODE ||
-    ENABLE_LOWERCASE ||
-    ENABLE_UPPERCASE ||
-    ENABLE_CAPITALIZE ||
-    ENABLE_STRIKETHROUGH ||
-    ENABLE_SUBSCRIPT ||
-    ENABLE_SUPERSCRIPT ||
-    ENABLE_CLEAR_FORMATTING ||
-    ENABLE_FONT_COLOR ||
-    ENABLE_BACKGROUND_COLOR ||
-    ENABLE_FONT_FAMILY ||
-    ENABLE_FONT_SIZE ||
-    ENABLE_INCREASE_FONT_SIZE ||
-    ENABLE_DECREASE_FONT_SIZE ||
-    ENABLE_INSERT_LINK ||
-    ENABLE_INSERT_STRAPI_IMAGE ||
-    ENABLE_LEFT_ALIGN ||
-    ENABLE_CENTER_ALIGN ||
-    ENABLE_RIGHT_ALIGN ||
-    ENABLE_JUSTIFY_ALIGN ||
-    ENABLE_START_ALIGN ||
-    ENABLE_END_ALIGN ||
-    ENABLE_INDENT ||
-    ENABLE_OUTDENT ||
-    ENABLE_HORIZONTAL_RULE ||
-    ENABLE_PAGE_BREAK ||
-    ENABLE_INSERT_IMAGE ||
-    ENABLE_INSERT_INLINE_IMAGE ||
-    ENABLE_INSERT_TABLE ||
-    ENABLE_POLL ||
-    ENABLE_COLUMNS_LAYOUT ||
-    ENABLE_EQUATION ||
-    ENABLE_STICKY_NOTE ||
-    ENABLE_COLLAPSIBLE_CONTAINER ||
-    ENABLE_TWITTER_EMBED ||
-    ENABLE_YOUTUBE_EMBED ||
-    ENABLE_FIGMA_EMBED;
+    features.undo ||
+    features.redo ||
+    features.paragraph ||
+    features.heading1 ||
+    features.heading2 ||
+    features.heading3 ||
+    features.bulletList ||
+    features.numberedList ||
+    features.checkList ||
+    features.quote ||
+    features.codeBlock ||
+    features.bold ||
+    features.italic ||
+    features.underline ||
+    features.inlineCode ||
+    features.lowercase ||
+    features.uppercase ||
+    features.capitalize ||
+    features.strikethrough ||
+    features.subscript ||
+    features.superscript ||
+    features.clearFormatting ||
+    features.fontColor ||
+    features.backgroundColor ||
+    features.fontFamily ||
+    features.fontSize ||
+    features.increaseFontSize ||
+    features.decreaseFontSize ||
+    features.insertLink ||
+    features.insertStrapiImage ||
+    features.leftAlign ||
+    features.centerAlign ||
+    features.rightAlign ||
+    features.justifyAlign ||
+    features.startAlign ||
+    features.endAlign ||
+    features.indent ||
+    features.outdent ||
+    features.horizontalRule ||
+    features.pageBreak ||
+    features.insertImage ||
+    features.insertInlineImage ||
+    features.insertTable ||
+    features.poll ||
+    features.columnsLayout ||
+    features.equation ||
+    features.stickyNote ||
+    features.collapsibleContainer ||
+    features.twitterEmbed ||
+    features.youtubeEmbed ||
+    features.figmaEmbed;
 
   return (
     <>
@@ -320,7 +204,7 @@ export default function CustomizableEditor(props: LexicalEditorProps): JSX.Eleme
           setIsLinkEditMode={setIsLinkEditMode}
         />
       )}
-      {isRichText && ENABLE_SHORTCUTS_PLUGIN && (
+      {isRichText && features.shortcutsPlugin && (
         <CustomizableShortcutsPlugin editor={activeEditor} setIsLinkEditMode={setIsLinkEditMode} />
       )}
       <div
@@ -328,22 +212,22 @@ export default function CustomizableEditor(props: LexicalEditorProps): JSX.Eleme
           !isRichText ? 'plain-text' : ''
         }`}
       >
-        {isMaxLength && <MaxLengthPlugin maxLength={30} />}
-        {ENABLE_DRAG_DROP_PASTE_PLUGIN && <DragDropPaste />}
-        {ENABLE_AUTO_FOCUS_PLUGIN && <AutoFocusPlugin />}
+        {isMaxLength && <MaxLengthPlugin maxLength={features.maxLength || 30} />}
+        {features.dragDropPastePlugin && <DragDropPaste />}
+        {features.autoFocusPlugin && <AutoFocusPlugin />}
         {selectionAlwaysOnDisplay && <SelectionAlwaysOnDisplay />}
-        {ENABLE_CLEAR_EDITOR_PLUGIN && <ClearEditorPlugin />}
-        {ENABLE_COMPONENT_PICKER_PLUGIN && <ComponentPickerPlugin />}
-        {ENABLE_EMOJI_PICKER_PLUGIN && <EmojiPickerPlugin />}
-        {ENABLE_AUTO_EMBED_PLUGIN && <AutoEmbedPlugin />}
-        {ENABLE_MENTIONS_PLUGIN && <MentionsPlugin />}
-        {ENABLE_EMOJIS_PLUGIN && <EmojisPlugin />}
-        {ENABLE_HASHTAG_PLUGIN && <HashtagPlugin />}
-        {ENABLE_KEYWORDS_PLUGIN && <KeywordsPlugin />}
-        {ENABLE_AUTO_LINK_PLUGIN && <AutoLinkPlugin />}
+        {features.clearEditorPlugin && <ClearEditorPlugin />}
+        {features.componentPickerPlugin && <ComponentPickerPlugin />}
+        {features.emojiPickerPlugin && <EmojiPickerPlugin />}
+        {features.autoEmbedPlugin && <AutoEmbedPlugin />}
+        {features.mentionsPlugin && <MentionsPlugin />}
+        {features.emojisPlugin && <EmojisPlugin />}
+        {features.hashtagPlugin && <HashtagPlugin />}
+        {features.keywordsPlugin && <KeywordsPlugin />}
+        {features.autoLinkPlugin && <AutoLinkPlugin />}
         {isRichText ? (
           <>
-            {ENABLE_HISTORY_PLUGIN && <HistoryPlugin externalHistoryState={historyState} />}
+            {features.historyPlugin && <HistoryPlugin externalHistoryState={historyState} />}
             <RichTextPlugin
               contentEditable={
                 <div className="editor-scroller">
@@ -354,42 +238,42 @@ export default function CustomizableEditor(props: LexicalEditorProps): JSX.Eleme
               }
               ErrorBoundary={LexicalErrorBoundary}
             />
-            {ENABLE_MARKDOWN_SHORTCUT_PLUGIN && <MarkdownShortcutPlugin />}
-            {ENABLE_CODE_HIGHLIGHT_PLUGIN && <CodeHighlightPlugin />}
-            {ENABLE_LIST_PLUGIN && <ListPlugin />}
-            {ENABLE_CHECK_LIST_PLUGIN && <CheckListPlugin />}
-            {ENABLE_TABLE_PLUGIN && (
+            {features.markdownShortcutPlugin && <MarkdownShortcutPlugin />}
+            {features.codeHighlightPlugin && <CodeHighlightPlugin />}
+            {features.listPlugin && <ListPlugin />}
+            {features.checkListPlugin && <CheckListPlugin />}
+            {features.tablePlugin && (
               <TablePlugin
                 hasCellMerge={tableCellMerge}
                 hasCellBackgroundColor={tableCellBackgroundColor}
                 hasHorizontalScroll={tableHorizontalScroll}
               />
             )}
-            {ENABLE_TABLE_CELL_RESIZER && <TableCellResizer />}
-            {ENABLE_IMAGES_PLUGIN && <ImagesPlugin />}
-            {ENABLE_INLINE_IMAGE_PLUGIN && <InlineImagePlugin />}
-            {ENABLE_LINK_PLUGIN && <LinkPlugin hasLinkAttributes={hasLinkAttributes} />}
-            {ENABLE_POLL_PLUGIN && <PollPlugin />}
-            {ENABLE_TWITTER_PLUGIN && <TwitterPlugin />}
-            {ENABLE_YOUTUBE_PLUGIN && <YouTubePlugin />}
-            {ENABLE_FIGMA_PLUGIN && <FigmaPlugin />}
-            {ENABLE_CLICKABLE_LINK_PLUGIN && <ClickableLinkPlugin disabled={isEditable} />}
-            {ENABLE_HORIZONTAL_RULE_PLUGIN && <HorizontalRulePlugin />}
-            {ENABLE_EQUATIONS_PLUGIN && <EquationsPlugin />}
-            {ENABLE_TAB_FOCUS_PLUGIN && <TabFocusPlugin />}
-            {ENABLE_TAB_INDENTATION_PLUGIN && <TabIndentationPlugin maxIndent={7} />}
-            {ENABLE_COLLAPSIBLE_PLUGIN && <CollapsiblePlugin />}
-            {ENABLE_PAGE_BREAK_PLUGIN && <PageBreakPlugin />}
-            {ENABLE_LAYOUT_PLUGIN && <LayoutPlugin />}
+            {features.tableCellResizer && <TableCellResizer />}
+            {features.imagesPlugin && <ImagesPlugin />}
+            {features.inlineImagePlugin && <InlineImagePlugin />}
+            {features.linkPlugin && <LinkPlugin hasLinkAttributes={hasLinkAttributes} />}
+            {features.pollPlugin && <PollPlugin />}
+            {features.twitterPlugin && <TwitterPlugin />}
+            {features.youtubePlugin && <YouTubePlugin />}
+            {features.figmaPlugin && <FigmaPlugin />}
+            {features.clickableLinkPlugin && <ClickableLinkPlugin disabled={isEditable} />}
+            {features.horizontalRulePlugin && <HorizontalRulePlugin />}
+            {features.equationsPlugin && <EquationsPlugin />}
+            {features.tabFocusPlugin && <TabFocusPlugin />}
+            {features.tabIndentationPlugin && <TabIndentationPlugin maxIndent={7} />}
+            {features.collapsiblePlugin && <CollapsiblePlugin />}
+            {features.pageBreakPlugin && <PageBreakPlugin />}
+            {features.layoutPlugin && <LayoutPlugin />}
             {floatingAnchorElem && !isSmallWidthViewport && (
               <>
-                {ENABLE_DRAGGABLE_BLOCK_PLUGIN && (
+                {features.draggableBlockPlugin && (
                   <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
                 )}
-                {ENABLE_CODE_ACTION_MENU_PLUGIN && (
+                {features.codeActionMenuPlugin && (
                   <CodeActionMenuPlugin anchorElem={floatingAnchorElem} />
                 )}
-                {ENABLE_FLOATING_LINK_EDITOR_PLUGIN && (
+                {features.floatingLinkEditorPlugin && (
                   <FloatingLinkEditorPlugin
                     anchorElem={floatingAnchorElem}
                     isLinkEditMode={isLinkEditMode}
@@ -397,13 +281,13 @@ export default function CustomizableEditor(props: LexicalEditorProps): JSX.Eleme
                     fieldName={props.fieldName}
                   />
                 )}
-                {ENABLE_TABLE_CELL_ACTION_MENU_PLUGIN && (
+                {features.tableCellActionMenuPlugin && (
                   <TableCellActionMenuPlugin anchorElem={floatingAnchorElem} cellMerge={true} />
                 )}
-                {ENABLE_TABLE_HOVER_ACTIONS_PLUGIN && (
+                {features.tableHoverActionsPlugin && (
                   <TableHoverActionsPlugin anchorElem={floatingAnchorElem} />
                 )}
-                {ENABLE_FLOATING_TEXT_FORMAT_TOOLBAR_PLUGIN && (
+                {features.floatingTextFormatToolbarPlugin && (
                   <FloatingTextFormatToolbarPlugin
                     anchorElem={floatingAnchorElem}
                     setIsLinkEditMode={setIsLinkEditMode}
@@ -418,17 +302,20 @@ export default function CustomizableEditor(props: LexicalEditorProps): JSX.Eleme
               contentEditable={<ContentEditable placeholder={placeholder} ref={props.ref} />}
               ErrorBoundary={LexicalErrorBoundary}
             />
-            {ENABLE_HISTORY_PLUGIN && <HistoryPlugin externalHistoryState={historyState} />}
+            {features.historyPlugin && <HistoryPlugin externalHistoryState={historyState} />}
           </>
         )}
         {(isCharLimit || isCharLimitUtf8) && (
-          <CharacterLimitPlugin charset={isCharLimit ? 'UTF-16' : 'UTF-8'} maxLength={5} />
+          <CharacterLimitPlugin
+            charset={isCharLimit ? 'UTF-16' : 'UTF-8'}
+            maxLength={features.charLimit || 5}
+          />
         )}
         {isAutocomplete && <AutocompletePlugin />}
         <div>{showTableOfContents && <TableOfContentsPlugin />}</div>
         {shouldUseLexicalContextMenu && <ContextMenuPlugin />}
         {shouldAllowHighlightingWithBrackets && <SpecialTextPlugin />}
-        {ENABLE_ACTIONS_PLUGIN && (
+        {features.actionsPlugin && (
           <ActionsPlugin
             isRichText={isRichText}
             shouldPreserveNewLinesInMarkdown={shouldPreserveNewLinesInMarkdown}

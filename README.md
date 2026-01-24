@@ -90,6 +90,212 @@
 
     > **Note:** Prism.js is required even if you don't plan to support code blocks. If you find a workaround to avoid this, please share it with us via a pull request or issue. We happily skip this installation step if we can!
 
+## Configuration
+
+The Lexical plugin is highly configurable. You can enable or disable specific editor features through your Strapi plugin configuration. The system automatically enables the necessary underlying plugins based on the features you choose.
+
+### Basic Configuration
+
+```javascript
+// ./config/plugins.js
+module.exports = {
+  lexical: {
+    enabled: true,
+    config: {
+      features: {
+        // === BASIC EDITING ===
+        // History (automatically enables historyPlugin)
+        undo: true,
+        redo: true,
+        
+        // Text Formatting (automatically enables richTextPlugin)
+        bold: true,
+        italic: true,
+        underline: true,
+        strikethrough: false,
+        subscript: false,
+        superscript: false,
+        
+        // Block Types (automatically enables listPlugin for lists)
+        paragraph: true,
+        heading1: true,
+        heading2: true,
+        heading3: false,
+        bulletList: true,
+        numberedList: true,
+        checkList: false,
+        quote: false,
+        
+        // Alignment
+        leftAlign: true,
+        centerAlign: true,
+        rightAlign: true,
+        justifyAlign: false,
+        
+        // Colors & Styling
+        fontColor: true,
+        backgroundColor: false,
+        fontSize: false,
+        
+        // === CONTENT INSERTION ===
+        // Links (automatically enables linkPlugin)
+        insertLink: true,
+        autoLinkDetection: true,
+        
+        // Images
+        insertStrapiImage: true,
+        insertImage: false,
+        insertInlineImage: false,
+        
+        // Tables (automatically enables tablePlugin when any table feature is enabled)
+        insertTable: false,
+        tableCellMerge: false,
+        tableCellBackgroundColor: false,
+        
+        // Advanced Content (automatically enables respective plugins)
+        codeBlock: false,              // Enables codeHighlightPlugin
+        equation: false,               // Enables equationsPlugin
+        poll: false,                   // Enables pollPlugin
+        twitterEmbed: false,           // Enables twitterPlugin
+        youtubeEmbed: false,           // Enables youtubePlugin
+        
+        // === UI/UX FEATURES ===
+        floatingTextFormatToolbar: true,
+        floatingLinkEditor: true,
+        shortcuts: true,
+        dragDropPaste: false,
+        contextMenu: false,
+        
+        // === SOCIAL FEATURES ===
+        mentions: false,               // Enables mentionsPlugin
+        hashtags: false,               // Enables hashtagPlugin
+        emojis: false,                 // Enables emojisPlugin
+        
+        // === EDITOR LIMITS ===
+        maxLength: false,              // Set to number > 0 to enable, automatically enables maxLengthPlugin
+        charLimit: false,              // Set to number > 0 to enable, automatically enables characterLimitPlugin
+        
+        // === ADVANCED OPTIONS ===
+        markdownShortcuts: false,      // Enables markdownShortcutPlugin
+        autocomplete: false,           // Enables autocompletePlugin
+        treeView: false,               // Enables treeViewPlugin (for debugging)
+      },
+    },
+  },
+};
+```
+
+### Configuration Presets
+
+#### Minimal Editor
+For a basic editing experience:
+
+```javascript
+features: {
+  undo: true,
+  redo: true,
+  bold: true,
+  italic: true,
+  paragraph: true,
+  insertLink: true,
+  shortcuts: true,
+}
+// Automatically enables: historyPlugin, richTextPlugin, linkPlugin, shortcutsPlugin
+```
+
+#### Standard Editor
+For most content editing needs:
+
+```javascript
+features: {
+  // Basic formatting
+  undo: true, redo: true, bold: true, italic: true, underline: true,
+  strikethrough: true, fontColor: true,
+  
+  // Structure  
+  paragraph: true, heading1: true, heading2: true, heading3: true,
+  bulletList: true, numberedList: true, checkList: true, quote: true,
+  
+  // Alignment & insertion
+  leftAlign: true, centerAlign: true, rightAlign: true,
+  insertLink: true, insertStrapiImage: true, insertTable: true,
+  
+  // UI
+  floatingTextFormatToolbar: true, floatingLinkEditor: true, shortcuts: true,
+}
+```
+
+#### Full-Featured Editor
+For advanced content creation:
+
+```javascript
+features: {
+  // Enable most features for power users
+  // (Full example would be quite long - enable features as needed)
+  
+  // Advanced content
+  codeBlock: true,
+  equation: true,
+  twitterEmbed: true,
+  youtubeEmbed: true,
+  
+  // Social features
+  mentions: true,
+  hashtags: true,
+  emojis: true,
+  
+  // Advanced UI
+  contextMenu: true,
+  autocomplete: true,
+  dragDropPaste: true,
+}
+```
+
+### Feature Categories
+
+| Category | Features | Auto-enabled Plugins |
+|----------|----------|---------------------|
+| **History** | `undo`, `redo` | `historyPlugin` |
+| **Text Formatting** | `bold`, `italic`, `underline`, etc. | `richTextPlugin` |
+| **Lists** | `bulletList`, `numberedList`, `checkList` | `listPlugin`, `checkListPlugin` |
+| **Links** | `insertLink`, `autoLinkDetection` | `linkPlugin`, `autoLinkPlugin` |
+| **Tables** | `insertTable`, `tableCellMerge`, etc. | `tablePlugin` |
+| **Code** | `codeBlock`, `codeLanguageSelector` | `codeHighlightPlugin` |
+| **Media** | `insertImage`, `insertInlineImage` | `imagesPlugin`, `inlineImagePlugin` |
+| **Embeds** | `twitterEmbed`, `youtubeEmbed`, `figmaEmbed` | `twitterPlugin`, `youtubePlugin`, `figmaPlugin` |
+| **Social** | `mentions`, `hashtags`, `emojis` | `mentionsPlugin`, `hashtagPlugin`, `emojisPlugin` |
+
+### Automatic Plugin Management
+
+The plugin system automatically enables the necessary underlying Lexical plugins based on your feature configuration:
+
+- **No dependency errors**: You can't accidentally enable a feature without its required plugin
+- **Performance optimized**: Only the plugins you need are loaded
+- **Simplified config**: Focus on what you want, not how it's implemented
+
+### Validation & Warnings
+
+The system includes built-in validation to help you avoid configuration issues:
+
+```javascript
+// ❌ This will throw an error:
+features: {
+  increaseFontSize: true,  // Requires fontSize to be enabled
+  fontSize: false,
+}
+
+// ✅ This will work:
+features: {
+  fontSize: true,
+  increaseFontSize: true,
+}
+```
+
+The plugin will also provide helpful warnings for performance and usability:
+- Performance warnings when multiple heavy features are enabled
+- Suggestions for related features that work well together
+- Notifications about minimal configurations
+
 ## Usage
 
 - A new **Lexical** custom field type will be available in the Strapi content-type builder.
