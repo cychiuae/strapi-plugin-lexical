@@ -56,6 +56,7 @@ import {
 import * as React from 'react';
 import { Dispatch, useCallback, useEffect, useState } from 'react';
 import { IS_APPLE } from '../../utils/environment';
+import { LINKS_ENABLED } from '../../../customization/features';
 
 import { useStrapiApp } from '@strapi/strapi/admin';
 import { blockTypeToBlockName, useToolbarState } from '../../context/ToolbarContext';
@@ -1208,25 +1209,27 @@ export default function ToolbarPlugin({
 
           <Divider />
 
-          <button
-            disabled={!isEditable}
-            onClick={insertLink}
-            className={'toolbar-item spaced ' + (toolbarState.isLink ? 'active' : '')}
-            aria-label={formatMessage({
-              id: 'lexical.plugin.toolbar.insert.link.aria',
-              defaultMessage: 'Insert link',
-            })}
-            title={formatMessage(
-              {
-                id: 'lexical.plugin.toolbar.insert.link.title',
-                defaultMessage: 'Insert link ({shortcut})',
-              },
-              { shortcut: SHORTCUTS.INSERT_LINK }
-            )}
-            type="button"
-          >
-            <i className="format link" />
-          </button>
+          {LINKS_ENABLED && (
+            <button
+              disabled={!isEditable}
+              onClick={insertLink}
+              className={'toolbar-item spaced ' + (toolbarState.isLink ? 'active' : '')}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.toolbar.insert.link.aria',
+                defaultMessage: 'Insert link',
+              })}
+              title={formatMessage(
+                {
+                  id: 'lexical.plugin.toolbar.insert.link.title',
+                  defaultMessage: 'Insert link ({shortcut})',
+                },
+                { shortcut: SHORTCUTS.INSERT_LINK }
+              )}
+              type="button"
+            >
+              <i className="format link" />
+            </button>
+          )}
           <button
             onClick={() => setIsStrapiImageDialogOpen(true)}
             title={formatMessage({

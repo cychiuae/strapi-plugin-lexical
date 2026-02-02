@@ -32,6 +32,7 @@ import { useIntl } from 'react-intl';
 import { getDOMRangeRect } from '../../utils/getDOMRangeRect';
 import { getSelectedNode } from '../../utils/getSelectedNode';
 import { setFloatingElemPosition } from '../../utils/setFloatingElemPosition';
+import { LINKS_ENABLED } from '../../../customization/features';
 
 function TextFormatFloatingToolbar({
   editor,
@@ -355,21 +356,23 @@ function TextFormatFloatingToolbar({
               <i className="format code" />
             </button>
           )}
-          <button
-            type="button"
-            onClick={insertLink}
-            className={'popup-item spaced ' + (isLink ? 'active' : '')}
-            title={formatMessage({
-              id: 'lexical.plugin.format.link.title',
-              defaultMessage: 'Insert link',
-            })}
-            aria-label={formatMessage({
-              id: 'lexical.plugin.format.link.aria',
-              defaultMessage: 'Insert link',
-            })}
-          >
-            <i className="format link" />
-          </button>
+          {LINKS_ENABLED && (
+            <button
+              type="button"
+              onClick={insertLink}
+              className={'popup-item spaced ' + (isLink ? 'active' : '')}
+              title={formatMessage({
+                id: 'lexical.plugin.format.link.title',
+                defaultMessage: 'Insert link',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.format.link.aria',
+                defaultMessage: 'Insert link',
+              })}
+            >
+              <i className="format link" />
+            </button>
+          )}
         </>
       )}
     </div>

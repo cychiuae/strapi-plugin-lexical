@@ -28,6 +28,10 @@ export const ENABLE_FONT_SIZE = false;
 export const ENABLE_INCREASE_FONT_SIZE = false;
 export const ENABLE_DECREASE_FONT_SIZE = false;
 export const ENABLE_INSERT_LINK = true;
+export const ENABLE_EXTERNAL_LINKS = true;
+export const ENABLE_INTERNAL_LINKS = false;
+// Derived constant: true if at least one link type is enabled
+export const LINKS_ENABLED = ENABLE_EXTERNAL_LINKS || ENABLE_INTERNAL_LINKS;
 export const ENABLE_INSERT_STRAPI_IMAGE = true;
 export const ENABLE_LEFT_ALIGN = true;
 export const ENABLE_CENTER_ALIGN = true;

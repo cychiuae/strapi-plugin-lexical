@@ -134,6 +134,7 @@ import {
   ENABLE_LEXICAL_CONTEXT_MENU,
   ENABLE_LINK_ATTRIBUTES,
   ENABLE_LINK_PLUGIN,
+  LINKS_ENABLED,
   ENABLE_LIST_PLUGIN,
   ENABLE_LOWERCASE,
   ENABLE_MARKDOWN_SHORTCUT_PLUGIN,
@@ -389,7 +390,7 @@ export default function CustomizableEditor(props: LexicalEditorProps): JSX.Eleme
                 {ENABLE_CODE_ACTION_MENU_PLUGIN && (
                   <CodeActionMenuPlugin anchorElem={floatingAnchorElem} />
                 )}
-                {ENABLE_FLOATING_LINK_EDITOR_PLUGIN && (
+                {ENABLE_FLOATING_LINK_EDITOR_PLUGIN && LINKS_ENABLED && (
                   <FloatingLinkEditorPlugin
                     anchorElem={floatingAnchorElem}
                     isLinkEditMode={isLinkEditMode}

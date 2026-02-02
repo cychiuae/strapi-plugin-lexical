@@ -20,6 +20,8 @@ import {
   useFetchClient,
 } from '@strapi/strapi/admin';
 
+import { ENABLE_EXTERNAL_LINKS, ENABLE_INTERNAL_LINKS } from '../customization/features';
+
 const highlightText = (text: string, q: string): React.ReactElement => {
   if (!q.trim().length) return <>{text}</>;
 
@@ -59,10 +61,25 @@ const LinkModal = ({
     () => (currentValue.startsWith('strapi://') ? 'internal' : 'external'),
     [currentValue]
   );
-  const defaultTab = React.useMemo(
-    () => (currentType === 'external' && currentValue.length ? 'external' : 'internal'),
-    [currentValue, currentType]
-  );
+
+  // Determine which tabs to show based on feature flags
+  const showExternalTab = ENABLE_EXTERNAL_LINKS;
+  const showInternalTab = ENABLE_INTERNAL_LINKS;
+  const showTabBar = showExternalTab && showInternalTab;
+
+  const defaultTab = React.useMemo(() => {
+    // If editing an existing link, try to use its type if that tab is enabled
+    if (currentValue.length) {
+      if (currentType === 'external' && showExternalTab) {
+        return 'external';
+      }
+      if (currentType === 'internal' && showInternalTab) {
+        return 'internal';
+      }
+    }
+    // Otherwise, default to the first available tab
+    return showInternalTab ? 'internal' : 'external';
+  }, [currentValue, currentType, showExternalTab, showInternalTab]);
 
   const [activeTab, setActiveTab] = React.useState(defaultTab);
 
@@ -161,97 +178,103 @@ const LinkModal = ({
             </Modal.Title>
           </Modal.Header>
           <Tabs.Root defaultValue={defaultTab} onValueChange={setActiveTab}>
-            <Tabs.List
-              aria-label={formatMessage({
-                id: 'lexical.components.link-modal.tab-list.aria-label',
-                defaultMessage: 'Do you want to link internal or external content?',
-              })}
-            >
-              <Tabs.Trigger value="internal">
-                {formatMessage({
-                  id: 'lexical.components.link-modal.tabs.title.internal-link',
-                  defaultMessage: 'Internal Link',
+            {showTabBar && (
+              <Tabs.List
+                aria-label={formatMessage({
+                  id: 'lexical.components.link-modal.tab-list.aria-label',
+                  defaultMessage: 'Do you want to link internal or external content?',
                 })}
-              </Tabs.Trigger>
-              <Tabs.Trigger value="external">
-                {formatMessage({
-                  id: 'lexical.components.link-modal.tabs.title.external-link',
-                  defaultMessage: 'External Link',
-                })}
-              </Tabs.Trigger>
-            </Tabs.List>
-            <Tabs.Content value="internal">
-              <Box padding={4} style={{ minHeight: '60vh', overflowY: 'scroll' }}>
-                <Field.Root error={internalError} onChange={handleSearch} required>
-                  <Field.Label>
-                    {formatMessage({
-                      id: 'lexical.components.link-modal.tabs.content.internal.label',
-                      defaultMessage: 'Search for content within Strapi to link to',
-                    })}
-                  </Field.Label>
-                  <Field.Input
-                    type="search"
-                    placeholder={formatMessage({
-                      id: 'lexical.components.link-modal.tabs.content.internal.placeholder',
-                      defaultMessage: 'Search...',
-                    })}
-                    size="M"
-                  />
-                  <Field.Error />
-                </Field.Root>
-                {searchResults.length > 0 && (
-                  <Radio.Group
-                    name="internal"
-                    defaultValue={currentType === 'internal' ? currentValue : undefined}
-                  >
-                    <Table colCount={2} rowCount={1} style={{ marginTop: '0.5rem' }}>
-                      <Tbody>
-                        {searchResults.map((result) => (
-                          <Tr key={result.documentId}>
-                            <Td>
-                              <Radio.Item
-                                value={`strapi://${result.collectionName}/${result.documentId}`}
-                                id={result.documentId}
-                              />
-                            </Td>
-                            <Td>
-                              <label htmlFor={result.documentId}>
-                                <Typography>
-                                  {highlightText(result.label, q)} ({result.collectionName}:
-                                  {result.id})
-                                </Typography>
-                              </label>
-                            </Td>
-                          </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
-                  </Radio.Group>
-                )}
-              </Box>
-            </Tabs.Content>
-            <Tabs.Content value="external">
-              <Box padding={4} style={{ minHeight: '60vh', overflowY: 'scroll' }}>
-                <Field.Root error={externalError} name="external" required>
-                  <Field.Label>
-                    {formatMessage({
-                      id: 'lexical.components.link-modal.tabs.content.external.label',
-                      defaultMessage: 'Enter URI to external content',
-                    })}
-                  </Field.Label>
-                  <Field.Input
-                    placeholder={formatMessage({
-                      id: 'lexical.components.link-modal.tabs.content.external.placeholder',
-                      defaultMessage: 'Enter external URL...',
-                    })}
-                    size="M"
-                    type="url"
-                    defaultValue={currentType === 'external' ? currentValue : ''}
-                  />
-                  <Field.Error />
-                </Field.Root>
-              </Box>
-            </Tabs.Content>
+              >
+                <Tabs.Trigger value="internal">
+                  {formatMessage({
+                    id: 'lexical.components.link-modal.tabs.title.internal-link',
+                    defaultMessage: 'Internal Link',
+                  })}
+                </Tabs.Trigger>
+                <Tabs.Trigger value="external">
+                  {formatMessage({
+                    id: 'lexical.components.link-modal.tabs.title.external-link',
+                    defaultMessage: 'External Link',
+                  })}
+                </Tabs.Trigger>
+              </Tabs.List>
+            )}
+            {showInternalTab && (
+              <Tabs.Content value="internal">
+                <Box padding={4} style={{ minHeight: '60vh', overflowY: 'scroll' }}>
+                  <Field.Root error={internalError} onChange={handleSearch} required>
+                    <Field.Label>
+                      {formatMessage({
+                        id: 'lexical.components.link-modal.tabs.content.internal.label',
+                        defaultMessage: 'Search for content within Strapi to link to',
+                      })}
+                    </Field.Label>
+                    <Field.Input
+                      type="search"
+                      placeholder={formatMessage({
+                        id: 'lexical.components.link-modal.tabs.content.internal.placeholder',
+                        defaultMessage: 'Search...',
+                      })}
+                      size="M"
+                    />
+                    <Field.Error />
+                  </Field.Root>
+                  {searchResults.length > 0 && (
+                    <Radio.Group
+                      name="internal"
+                      defaultValue={currentType === 'internal' ? currentValue : undefined}
+                    >
+                      <Table colCount={2} rowCount={1} style={{ marginTop: '0.5rem' }}>
+                        <Tbody>
+                          {searchResults.map((result) => (
+                            <Tr key={result.documentId}>
+                              <Td>
+                                <Radio.Item
+                                  value={`strapi://${result.collectionName}/${result.documentId}`}
+                                  id={result.documentId}
+                                />
+                              </Td>
+                              <Td>
+                                <label htmlFor={result.documentId}>
+                                  <Typography>
+                                    {highlightText(result.label, q)} ({result.collectionName}:
+                                    {result.id})
+                                  </Typography>
+                                </label>
+                              </Td>
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      </Table>
+                    </Radio.Group>
+                  )}
+                </Box>
+              </Tabs.Content>
+            )}
+            {showExternalTab && (
+              <Tabs.Content value="external">
+                <Box padding={4} style={{ minHeight: '60vh', overflowY: 'scroll' }}>
+                  <Field.Root error={externalError} name="external" required>
+                    <Field.Label>
+                      {formatMessage({
+                        id: 'lexical.components.link-modal.tabs.content.external.label',
+                        defaultMessage: 'Enter URI to external content',
+                      })}
+                    </Field.Label>
+                    <Field.Input
+                      placeholder={formatMessage({
+                        id: 'lexical.components.link-modal.tabs.content.external.placeholder',
+                        defaultMessage: 'Enter external URL...',
+                      })}
+                      size="M"
+                      type="url"
+                      defaultValue={currentType === 'external' ? currentValue : ''}
+                    />
+                    <Field.Error />
+                  </Field.Root>
+                </Box>
+              </Tabs.Content>
+            )}
           </Tabs.Root>
           <Modal.Footer>
             <Modal.Close>
