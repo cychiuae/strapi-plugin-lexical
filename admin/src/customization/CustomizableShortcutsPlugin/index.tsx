@@ -51,35 +51,7 @@ import {
   isSuperscript,
   isUppercase,
 } from '../../lexical/plugins/ShortcutsPlugin/shortcuts';
-import {
-  ENABLE_BULLET_LIST,
-  ENABLE_CAPITALIZE,
-  ENABLE_CENTER_ALIGN,
-  ENABLE_CHECK_LIST,
-  ENABLE_CLEAR_FORMATTING,
-  ENABLE_CODE_BLOCK,
-  ENABLE_DECREASE_FONT_SIZE,
-  ENABLE_HEADING_1,
-  ENABLE_HEADING_2,
-  ENABLE_HEADING_3,
-  ENABLE_INCREASE_FONT_SIZE,
-  ENABLE_INDENT,
-  ENABLE_INSERT_LINK,
-  ENABLE_INLINE_CODE,
-  ENABLE_ITALIC,
-  ENABLE_JUSTIFY_ALIGN,
-  ENABLE_LEFT_ALIGN,
-  ENABLE_LOWERCASE,
-  ENABLE_NUMBERED_LIST,
-  ENABLE_OUTDENT,
-  ENABLE_PARAGRAPH,
-  ENABLE_QUOTE,
-  ENABLE_RIGHT_ALIGN,
-  ENABLE_STRIKETHROUGH,
-  ENABLE_SUBSCRIPT,
-  ENABLE_SUPERSCRIPT,
-  ENABLE_UPPERCASE,
-} from '../features';
+import { useFeatureFlags } from '../FeatureContext';
 
 export default function CustomizableShortcutsPlugin({
   editor,
@@ -89,93 +61,118 @@ export default function CustomizableShortcutsPlugin({
   setIsLinkEditMode: Dispatch<boolean>;
 }): null {
   const { toolbarState } = useToolbarState();
+  const {
+    paragraph,
+    heading1,
+    heading2,
+    heading3,
+    bulletList,
+    numberedList,
+    checkList,
+    codeBlock,
+    quote,
+    strikethrough,
+    lowercase,
+    uppercase,
+    capitalize,
+    indent,
+    outdent,
+    centerAlign,
+    leftAlign,
+    rightAlign,
+    justifyAlign,
+    subscript,
+    superscript,
+    inlineCode,
+    increaseFontSize,
+    decreaseFontSize,
+    clearFormatting: clearFormattingEnabled,
+    insertLink,
+  } = useFeatureFlags();
 
   useEffect(() => {
     const keyboardShortcutsHandler = (payload: KeyboardEvent) => {
       const event: KeyboardEvent = payload;
 
-      if (ENABLE_PARAGRAPH && isFormatParagraph(event)) {
+      if (paragraph && isFormatParagraph(event)) {
         event.preventDefault();
         formatParagraph(editor);
-      } else if (
-        (ENABLE_HEADING_1 || ENABLE_HEADING_2 || ENABLE_HEADING_3) &&
-        isFormatHeading(event)
-      ) {
+      } else if ((heading1 || heading2 || heading3) && isFormatHeading(event)) {
         event.preventDefault();
         const { code } = event;
         const headingSize = `h${code[code.length - 1]}` as HeadingTagType;
         // Only process if the heading is enabled
         if (
-          (headingSize === 'h1' && ENABLE_HEADING_1) ||
-          (headingSize === 'h2' && ENABLE_HEADING_2) ||
-          (headingSize === 'h3' && ENABLE_HEADING_3)
+          (headingSize === 'h1' && heading1) ||
+          (headingSize === 'h2' && heading2) ||
+          (headingSize === 'h3' && heading3)
         ) {
           formatHeading(editor, toolbarState.blockType, headingSize);
         }
-      } else if (ENABLE_BULLET_LIST && isFormatBulletList(event)) {
+      } else if (bulletList && isFormatBulletList(event)) {
         event.preventDefault();
         formatBulletList(editor, toolbarState.blockType);
-      } else if (ENABLE_NUMBERED_LIST && isFormatNumberedList(event)) {
+      } else if (numberedList && isFormatNumberedList(event)) {
         event.preventDefault();
         formatNumberedList(editor, toolbarState.blockType);
-      } else if (ENABLE_CHECK_LIST && isFormatCheckList(event)) {
+      } else if (checkList && isFormatCheckList(event)) {
         event.preventDefault();
         formatCheckList(editor, toolbarState.blockType);
-      } else if (ENABLE_CODE_BLOCK && isFormatCode(event)) {
+      } else if (codeBlock && isFormatCode(event)) {
         event.preventDefault();
         formatCode(editor, toolbarState.blockType);
-      } else if (ENABLE_QUOTE && isFormatQuote(event)) {
+      } else if (quote && isFormatQuote(event)) {
         event.preventDefault();
         formatQuote(editor, toolbarState.blockType);
-      } else if (ENABLE_STRIKETHROUGH && isStrikeThrough(event)) {
+      } else if (strikethrough && isStrikeThrough(event)) {
         event.preventDefault();
         editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
-      } else if (ENABLE_LOWERCASE && isLowercase(event)) {
+      } else if (lowercase && isLowercase(event)) {
         event.preventDefault();
         editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'lowercase');
-      } else if (ENABLE_UPPERCASE && isUppercase(event)) {
+      } else if (uppercase && isUppercase(event)) {
         event.preventDefault();
         editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'uppercase');
-      } else if (ENABLE_CAPITALIZE && isCapitalize(event)) {
+      } else if (capitalize && isCapitalize(event)) {
         event.preventDefault();
         editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'capitalize');
-      } else if (ENABLE_INDENT && isIndent(event)) {
+      } else if (indent && isIndent(event)) {
         event.preventDefault();
         editor.dispatchCommand(INDENT_CONTENT_COMMAND, undefined);
-      } else if (ENABLE_OUTDENT && isOutdent(event)) {
+      } else if (outdent && isOutdent(event)) {
         event.preventDefault();
         editor.dispatchCommand(OUTDENT_CONTENT_COMMAND, undefined);
-      } else if (ENABLE_CENTER_ALIGN && isCenterAlign(event)) {
+      } else if (centerAlign && isCenterAlign(event)) {
         event.preventDefault();
         editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center');
-      } else if (ENABLE_LEFT_ALIGN && isLeftAlign(event)) {
+      } else if (leftAlign && isLeftAlign(event)) {
         event.preventDefault();
         editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left');
-      } else if (ENABLE_RIGHT_ALIGN && isRightAlign(event)) {
+      } else if (rightAlign && isRightAlign(event)) {
         event.preventDefault();
         editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right');
-      } else if (ENABLE_JUSTIFY_ALIGN && isJustifyAlign(event)) {
+      } else if (justifyAlign && isJustifyAlign(event)) {
         event.preventDefault();
         editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'justify');
-      } else if (ENABLE_SUBSCRIPT && isSubscript(event)) {
+      } else if (subscript && isSubscript(event)) {
         event.preventDefault();
         editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
-      } else if (ENABLE_SUPERSCRIPT && isSuperscript(event)) {
+      } else if (superscript && isSuperscript(event)) {
         event.preventDefault();
         editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
-      } else if (ENABLE_INLINE_CODE && isInsertCodeBlock(event)) {
+      } else if (inlineCode && isInsertCodeBlock(event)) {
         event.preventDefault();
         editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
-      } else if (ENABLE_INCREASE_FONT_SIZE && isIncreaseFontSize(event)) {
+      } else if (increaseFontSize && isIncreaseFontSize(event)) {
         event.preventDefault();
         updateFontSize(editor, UpdateFontSizeType.increment, toolbarState.fontSizeInputValue);
-      } else if (ENABLE_DECREASE_FONT_SIZE && isDecreaseFontSize(event)) {
+      } else if (decreaseFontSize && isDecreaseFontSize(event)) {
         event.preventDefault();
         updateFontSize(editor, UpdateFontSizeType.decrement, toolbarState.fontSizeInputValue);
-      } else if (ENABLE_CLEAR_FORMATTING && isClearFormatting(event)) {
+      } else if (clearFormattingEnabled && isClearFormatting(event)) {
         event.preventDefault();
         clearFormatting(editor);
-      } else if (ENABLE_INSERT_LINK && isInsertLink(event)) {
+      } else if (insertLink && isInsertLink(event)) {
         event.preventDefault();
         const url = toolbarState.isLink ? null : sanitizeUrl('https://');
         setIsLinkEditMode(!toolbarState.isLink);
