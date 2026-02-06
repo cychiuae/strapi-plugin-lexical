@@ -14,6 +14,8 @@ import {
 } from 'lexical';
 
 import CustomizableEditor from '../customization/CustomizableEditor';
+import { FeatureFlagsProvider } from '../customization/FeatureContext';
+import { extractFeatureOptions } from '../customization/featureConfig';
 import { FlashMessageContext } from '../lexical/context/FlashMessageContext';
 import { ToolbarContext } from '../lexical/context/ToolbarContext';
 import { TableContext } from '../lexical/plugins/TablePlugin';
@@ -57,6 +59,12 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
     const { attribute, name, onChange, required, value, error, hint, labelAction, label } = props;
     const { formatMessage } = useIntl();
     const { get } = useFetchClient();
+
+    // Extract feature options from attribute configuration
+    const featureOptions = React.useMemo(() => {
+      const options = (attribute as { options?: Record<string, unknown> }).options || {};
+      return extractFeatureOptions(options);
+    }, [attribute]);
 
     // Track if change is done by the user or by strapi, to support locale switching and locale prefilling
     const [expectedEditorState, setExpectedEditorState] = React.useState<
@@ -268,20 +276,22 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
         <Flex direction="column" alignItems="stretch" gap={1}>
           <Field.Label action={labelAction}>{label}</Field.Label>
           <div>
-            <FlashMessageContext>
-              <LexicalComposer initialConfig={initialConfig}>
-                <TableContext>
-                  <ToolbarContext>
-                    <CustomizableEditor
-                      onChange={handleChangeCb}
-                      ref={ref}
-                      fieldName={name}
-                      expectedEditorState={expectedEditorState}
-                    />
-                  </ToolbarContext>
-                </TableContext>
-              </LexicalComposer>
-            </FlashMessageContext>
+            <FeatureFlagsProvider options={featureOptions}>
+              <FlashMessageContext>
+                <LexicalComposer initialConfig={initialConfig}>
+                  <TableContext>
+                    <ToolbarContext>
+                      <CustomizableEditor
+                        onChange={handleChangeCb}
+                        ref={ref}
+                        fieldName={name}
+                        expectedEditorState={expectedEditorState}
+                      />
+                    </ToolbarContext>
+                  </TableContext>
+                </LexicalComposer>
+              </FlashMessageContext>
+            </FeatureFlagsProvider>
           </div>
           <Field.Hint />
           <Field.Error />
