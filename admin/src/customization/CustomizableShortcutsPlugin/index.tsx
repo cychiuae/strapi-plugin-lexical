@@ -1,6 +1,8 @@
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { HeadingTagType } from '@lexical/rich-text';
+import { mergeRegister } from '@lexical/utils';
 import {
+  COMMAND_PRIORITY_HIGH,
   COMMAND_PRIORITY_NORMAL,
   FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
@@ -8,6 +10,7 @@ import {
   KEY_MODIFIER_COMMAND,
   LexicalEditor,
   OUTDENT_CONTENT_COMMAND,
+  TextFormatType,
 } from 'lexical';
 import { Dispatch, useEffect } from 'react';
 
@@ -62,6 +65,9 @@ export default function CustomizableShortcutsPlugin({
 }): null {
   const { toolbarState } = useToolbarState();
   const {
+    bold,
+    italic,
+    underline,
     paragraph,
     heading1,
     heading2,
@@ -183,10 +189,24 @@ export default function CustomizableShortcutsPlugin({
       return false;
     };
 
-    return editor.registerCommand(
-      KEY_MODIFIER_COMMAND,
-      keyboardShortcutsHandler,
-      COMMAND_PRIORITY_NORMAL
+    return mergeRegister(
+      editor.registerCommand(
+        KEY_MODIFIER_COMMAND,
+        keyboardShortcutsHandler,
+        COMMAND_PRIORITY_NORMAL
+      ),
+      // Block disabled native text format shortcuts (Ctrl+B, Ctrl+I, Ctrl+U)
+      // registered by Lexical's RichTextPlugin
+      editor.registerCommand(
+        FORMAT_TEXT_COMMAND,
+        (format: TextFormatType) => {
+          if (format === 'bold' && !bold) return true;
+          if (format === 'italic' && !italic) return true;
+          if (format === 'underline' && !underline) return true;
+          return false;
+        },
+        COMMAND_PRIORITY_HIGH
+      )
     );
   }, [
     editor,
@@ -194,6 +214,9 @@ export default function CustomizableShortcutsPlugin({
     toolbarState.blockType,
     toolbarState.fontSizeInputValue,
     setIsLinkEditMode,
+    bold,
+    italic,
+    underline,
   ]);
 
   return null;
